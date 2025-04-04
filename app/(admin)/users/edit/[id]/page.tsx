@@ -60,7 +60,13 @@ export default async function EditUserPage(props: { params: UserPageProps }) {
 
     return (
         <div>
-            <PageBreadcrumb pageTitle="Edit Roles" />
+            <PageBreadcrumb
+                items={[
+                    { title: "Home", href: "/" },
+                    { title: "Users", href: "/users" },
+                    { title: "Edit" }
+                ]}
+            />
             <div
                 className="w-full rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
 

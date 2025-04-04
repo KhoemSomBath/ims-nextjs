@@ -2,7 +2,6 @@
 
 import React from "react";
 import type {ApiResponse} from "@/types/BaseRespond";
-import type {User} from "@/types/User";
 import {BaseDataTable} from "@/components/tables/BaseDataTable";
 import {ReactTableAction} from "@/types/table";
 import {Pencil, Trash2} from "lucide-react";
@@ -11,40 +10,41 @@ import {IconButton} from "@/components/ui/button/IconButton";
 import {cn, DateFormats} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
+import type {Currency} from "@/types/Currency";
 
 interface RolesPageProps {
     query: string,
-    data: ApiResponse<User[]>,
+    data: ApiResponse<Currency[]>,
     handleDelete?: (id: string | number) => Promise<ApiResponse<void>>,
 }
 
-export default function Users({data, handleDelete, query}: RolesPageProps) {
+export default function CurrencyPage({data, handleDelete, query}: RolesPageProps) {
 
     const {confirm, ConfirmModal} = useConfirmModal();
     const router = useRouter();
 
-    const userActions: ReactTableAction<User>[] = [
+    const actions: ReactTableAction<Currency>[] = [
         {
             name: 'Edit',
             icon: <Pencil className="h-4 w-4"/>,
-            onClick: (user) => {
-                router.push(`/users/edit/${user.id}`);
+            onClick: (item) => {
+                router.push(`/currency/edit/${item.id}`);
             },
             variant: 'outline'
         },
         {
             name: 'Delete',
             icon: <Trash2 className="h-4 w-4"/>,
-            onClick: (user) => {
+            onClick: (item) => {
                 confirm(
                     async () => {
                         if (handleDelete) {
-                            await handleDelete(user.id);
+                            await handleDelete(item.id);
                         }
                     },
                     {
                         title: 'Confirm Deletion',
-                        description: `Are you sure you want to delete this ${user.name} user?`,
+                        description: `Are you sure you want to delete this ${item.name} currency?`,
                         confirmText: 'Delete',
                         cancelText: 'Cancel',
                         isDestructive: true
@@ -56,7 +56,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         }
     ];
 
-    const getUserColumns = (actions?: ReactTableAction<User>[]): ColumnDef<User>[] => [
+    const getColumns = (actions?: ReactTableAction<Currency>[]): ColumnDef<Currency>[] => [
         {
             accessorKey: 'id',
             header: 'No',
@@ -68,14 +68,14 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
             cell: ({row}) => row.original.name
         },
         {
-            accessorKey: 'role',
-            header: 'Role',
-            cell: ({row}) => (
-                <span
-                    className="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-400/10 dark:text-brand-400">
-        {row.original.role.name}
-      </span>
-            )
+            accessorKey: 'code',
+            header: 'Code',
+            cell: ({row}) => row.original.code
+        },
+        {
+            accessorKey: 'rate',
+            header: 'Rate',
+            cell: ({row}) => row.original.rate
         },
         {
             accessorKey: 'createdAt',
@@ -90,7 +90,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         ...(actions ? [{
             id: 'actions',
             header: 'Actions',
-            cell: ({row}: { row: { original: User } }) => (
+            cell: ({row}: { row: { original: Currency } }) => (
                 <div className="flex space-x-1">
                     {actions.map((action) => (
                         <IconButton
@@ -122,8 +122,9 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
             <BaseDataTable
                 pageData={data}
                 query={query}
-                addNewLink={'users/new'}
-                columns={getUserColumns(userActions)}
+                addNewLink={'currency/new'}
+                columns={getColumns(actions)}
+                isPagination={false}
             />
             <ConfirmModal/>
         </div>

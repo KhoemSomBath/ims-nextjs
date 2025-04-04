@@ -38,7 +38,12 @@ export default async function RolesPage(props: { searchParams: RolesPageProps })
 
     return (
         <div>
-            <PageBreadcrumb pageTitle="Roles"/>
+            <PageBreadcrumb
+                items={[
+                    { title: "Home", href: "/" },
+                    { title: "Roles" }
+                ]}
+            />
             <Suspense fallback={<Loading
                 fullScreen
                 withText={false}

@@ -1,27 +1,58 @@
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import React from "react";
+import React, {Suspense} from "react";
 import type {Metadata} from "next";
+import {deleteWithAuth, getWithAuth} from "@/lib/api-client";
+import type {ApiResponse} from "@/types/BaseRespond";
+import {revalidateTag} from "next/cache";
+import type {Currency} from "@/types/Currency";
+import {Loading} from "@/components/common/Loading";
+import CurrencyPage from "@/components/page/currency/CurrencyPage";
 
 export const metadata: Metadata = {
-  title: "Next.js Blank Page | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Blank Page TailAdmin Dashboard Template",
+    title: "Currency",
+    description: "This is Currency Page in IMS",
 };
 
-export default function BlankPage() {
+type PageProps = Promise<{ page?: number, query?: string, from?: string }>
+
+
+export default async function CurrencyServerPage(props: { searchParams: PageProps }) {
+
+    const searchParams = await props.searchParams;
+    const {page = 1, query = ''} = searchParams;
+
+    const data = await getWithAuth<ApiResponse<Currency[]>>('/currency', {
+        params: {
+            page: page - 1,
+            query: query || '',
+        },
+        tags: ['currency'],
+    })
+
+    async function handleDelete(id: string | number) {
+        'use server'
+        const data = await deleteWithAuth<ApiResponse<void>>(`/currency/${id}`, {tags: ['currency'],});
+        if (data.status == 200)
+            revalidateTag('currency')
+        return data;
+    }
+
   return (
     <div>
-      <PageBreadcrumb pageTitle="Blank Page" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
-        <div className="mx-auto w-full max-w-[630px] text-center">
-          <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-            Card Title Here
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-            Start putting content on grids or panels, you can also use different
-            combinations of grids.Please check out the dashboard and other pages
-          </p>
-        </div>
-      </div>
+      <PageBreadcrumb
+          items={[
+            { title: "Home", href: "/" },
+            { title: "Currency" }
+          ]}
+      />
+        <Suspense key={`currency-${page}-${query}`} fallback={<Loading
+            fullScreen
+            withText={false}
+            size="lg"
+            variant="brand"
+        />}>
+            <CurrencyPage query={query} data={data} handleDelete={handleDelete}/>
+        </Suspense>
     </div>
   );
 }

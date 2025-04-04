@@ -5,8 +5,8 @@ import {deleteWithAuth, getWithAuth} from "@/lib/api-client";
 import type {ApiResponse} from "@/types/BaseRespond";
 import {revalidateTag} from "next/cache";
 import type {User} from "@/types/User";
-import Users from "@/components/page/user/Users";
 import {Loading} from "@/components/common/Loading";
+import Users from "@/components/page/user/Users";
 
 export const metadata: Metadata = {
     title: "Users",
@@ -38,9 +38,21 @@ export default async function UsersPage(props: { searchParams: UsersPageProps })
 
     return (
         <div>
-            <PageBreadcrumb pageTitle="Users"/>
-            <Users addNewLink={'/users/new'} query={query} data={data} handleDelete={handleDelete}/>
-
+            <PageBreadcrumb
+                items={[
+                    { title: "Home", href: "/" },
+                    { title: "Users" }
+                ]}
+            />
+            <Suspense key={`user-${page}-${query}`} fallback={<Loading
+                fullScreen
+                withText={false}
+                size="lg"
+                variant="brand"
+            />}>
+                <Users query={query} data={data} handleDelete={handleDelete}/>
+            </Suspense>
         </div>
     );
+
 }

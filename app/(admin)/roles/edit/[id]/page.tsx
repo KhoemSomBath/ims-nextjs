@@ -50,7 +50,13 @@ export default async function EditRolePage(props: { params: RolePageProps }) {
 
     return (
         <div>
-            <PageBreadcrumb pageTitle="Edit Roles" />
+            <PageBreadcrumb
+                items={[
+                    { title: "Home", href: "/" },
+                    { title: "Roles", href: "/roles" },
+                    { title: "Edit Role" },
+                ]}
+            />
             <div
                 className="w-full rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
                 <RoleForm
