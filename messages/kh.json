@@ -1,0 +1,17 @@
+{
+  "Common": {
+    "home": "ទំពរ័ដើម",
+    "add-new": "បង្កើតថ្មី",
+    "search": "ស្វែងរក",
+    "show": "បង្ហាញ",
+    "to": "ទៅ",
+    "of": "នៃ",
+    "elements": "ទិន្នន័យ",
+    "previous": "ថយក្រោយ",
+    "next": "បន្ទាប់"
+  },
+  "Users": {
+    "title": "នាក់ប្រើប្រាស់",
+    "description": "Manage all system users"
+  }
+}
