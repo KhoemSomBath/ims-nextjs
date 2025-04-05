@@ -14,6 +14,7 @@ import Button from "@/components/ui/button/Button";
 import Pagination from "@/components/tables/Pagination";
 import {cn} from "@/lib/utils";
 import type {ApiResponse} from "@/types/BaseRespond";
+import {useTranslations} from "use-intl";
 
 interface ReactDataTableProps<TData> {
     pageData: ApiResponse<TData[]>,
@@ -44,6 +45,7 @@ export function BaseDataTable<TData>({
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const t = useTranslations('Common');
 
     // Calculate display range
     const {data, paging} = pageData;
@@ -145,7 +147,7 @@ export function BaseDataTable<TData>({
                             className="gap-2"
                         >
                             <PlusCircle className="h-4 w-4"/>
-                            Add new
+                            {t('add-new')}
                         </Button>
                     )}
                 </div>
@@ -173,7 +175,7 @@ export function BaseDataTable<TData>({
                                 if (e.key === 'Enter') handleSearch();
                                 if (e.key === 'Escape') handleClear();
                             }}
-                            placeholder="Search"
+                            placeholder={t('search')}
                             className="h-10 w-full dark:shadow-theme-md rounded-lg border border-gray-200 py-2 pl-10 pr-24 text-sm text-gray-800 dark:border-gray-700 placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-4 focus:ring-brand-500/10 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-brand-800"
                         />
 
@@ -248,9 +250,9 @@ export function BaseDataTable<TData>({
             {isPagination &&
                 <div className="flex items-center justify-between border-t pt-4 border-gray-200 dark:border-gray-700">
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Showing <span className="font-semibold"> {paging.totals ? startElement : 0} </span>to
-                        <span className="font-semibold"> {endElement} </span> of
-                        <span className="font-semibold"> {paging.totals} </span> elements
+                        {t('show')} <span className="font-semibold"> {paging.totals ? startElement : 0} </span>{t('to')}
+                        <span className="font-semibold"> {endElement} </span> {t('of')}
+                        <span className="font-semibold"> {paging.totals} </span> {t('elements')}
                     </div>
                     <Pagination
                         currentPage={paging.page + 1}

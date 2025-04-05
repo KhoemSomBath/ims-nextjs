@@ -6,6 +6,9 @@ import {getCurrentUser} from "@/lib/auth";
 import {AuthProvider} from "@/context/AuthProvider";
 import type {Metadata, Viewport} from "next";
 import React from "react";
+import {NextIntlClientProvider} from "next-intl";
+import {getSetting} from "@/lib/setting-loader";
+import {SettingLabel} from "@/types/settings";
 
 export const metadata: Metadata = {
     title: {
@@ -42,9 +45,10 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const user = await getCurrentUser();
+    const locale = await getSetting<string>(SettingLabel.IMS_DEFAULT_LANGUAGE)
 
     return (
-        <html lang="en" suppressHydrationWarning className={`${outfit}`}>
+        <html lang={locale} suppressHydrationWarning className={`${outfit}`}>
         <body className={`${outfit.className} bg-white dark:bg-gray-900`}>
         <ThemeProvider
             attribute="class"
@@ -53,11 +57,14 @@ export default async function RootLayout({
             disableTransitionOnChange
             storageKey="ims-theme"
         >
-            <AuthProvider user={user}>
-                <SidebarProvider>
-                    {children}
-                </SidebarProvider>
-            </AuthProvider>
+            <NextIntlClientProvider>
+                <AuthProvider user={user}>
+                    <SidebarProvider>
+                        {children}
+                    </SidebarProvider>
+                </AuthProvider>
+            </NextIntlClientProvider>
+
         </ThemeProvider>
         </body>
         </html>

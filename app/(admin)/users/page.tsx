@@ -7,6 +7,8 @@ import {revalidateTag} from "next/cache";
 import type {User} from "@/types/User";
 import {Loading} from "@/components/common/Loading";
 import Users from "@/components/page/user/Users";
+import {getTranslations} from "next-intl/server";
+
 
 export const metadata: Metadata = {
     title: "Users",
@@ -19,6 +21,9 @@ type UsersPageProps = Promise<{ page?: number, query?: string, from?: string }>
 export default async function UsersPage(props: { searchParams: UsersPageProps }) {
     const searchParams = await props.searchParams;
     const {page = 1, query = ''} = searchParams;
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Users');
+
 
     const data = await getWithAuth<ApiResponse<User[]>>('/user', {
         params: {
@@ -40,8 +45,8 @@ export default async function UsersPage(props: { searchParams: UsersPageProps })
         <div>
             <PageBreadcrumb
                 items={[
-                    { title: "Home", href: "/" },
-                    { title: "Users" }
+                    { title: commonT('home'), href: "/" },
+                    { title: t('title') }
                 ]}
             />
             <Suspense key={`user-${page}-${query}`} fallback={<Loading
