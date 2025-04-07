@@ -8,10 +8,31 @@
     "of": "នៃ",
     "elements": "ទិន្នន័យ",
     "previous": "ថយក្រោយ",
-    "next": "បន្ទាប់"
+    "back": "ត្រលប់ក្រោយ",
+    "next": "បន្ទាប់",
+    "confirm_deletion": "បញ្ជាក់ការលុប",
+    "action": "សកម្មភាព",
+    "createdAt": "ថ្ងៃបង្កើត",
+    "updatedAt": "ថ្ងៃកែប្រែ"
   },
   "Users": {
     "title": "នាក់ប្រើប្រាស់",
     "description": "Manage all system users"
+  },
+  "Categories": {
+    "title": "ប្រភេទផលិតផល",
+    "create": "បង្កើតប្រភេទផលិតផល",
+    "update": "កែប្រែ្រភេទផលិតផល",
+    "description": "Manage all system users",
+    "delete_description": "តើអ្នកប្រាកដថាចង់លុបប្រភេទផលិតផលនេះមែនទេ?",
+    "columns": {
+      "no": "ល.រ",
+      "name": "ឈ្មោះ",
+      "description": "ការពិពណ៌នា"
+    },
+    "validation": {
+      "name_required": "សូមបំពេញឈ្មោះប្រភេទផលិតផល",
+      "description_required": "សូមបំពេញការពិពណ៌នារបស់ប្រភេទផលិតផល"
+    }
   }
 }

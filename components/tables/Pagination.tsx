@@ -15,10 +15,13 @@ const Pagination: React.FC<PaginationProps> = ({
 
     const t = useTranslations('Common');
 
-  const pagesAroundCurrent = Array.from(
-    { length: Math.min(3, totalPages) },
-    (_, i) => i + Math.max(currentPage - 1, 1)
-  );
+    const pagesAroundCurrent = Array.from(
+        { length: Math.min(3, totalPages) },
+        (_, i) => {
+            const startPage = Math.max(1, Math.min(currentPage - 1, totalPages - 2));
+            return Math.min(startPage + i, totalPages);
+        }
+    ).filter(page => page >= 1 && page <= totalPages);
 
 
   return (

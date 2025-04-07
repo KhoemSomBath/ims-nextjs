@@ -5,27 +5,26 @@ import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {useSidebar} from "@/context/SidebarContext";
 import {
-    ChevronDownIcon,
-    CurrencyIcon,
+    BoxesIcon,
+    ChevronDownIcon, ClockIcon,
+    CurrencyIcon, FileTextIcon, HourglassIcon, LayersIcon,
     LayoutDashboardIcon,
     MoreHorizontal,
-    PackageIcon,
-    ScaleIcon,
-    SettingsIcon,
+    PackageIcon, PieChart, RepeatIcon, Settings,
     ShieldIcon,
-    ShoppingCartIcon,
-    TagsIcon,
+    ShoppingCartIcon, SlidersHorizontal,
+    TagsIcon, TrendingUpIcon,
     TruckIcon,
     UsersIcon,
-    WarehouseIcon
+    WarehouseIcon,
 } from "lucide-react";
 
 // Type definitions
 type SubItem = {
     name: string;
     path: string;
-    pro?: boolean;
     new?: boolean;
+    icon: React.ReactNode;
 };
 
 type NavItem = {
@@ -71,36 +70,80 @@ const useNavConfig = () => {
                     name: "Categories",
                     path: "/categories",
                 },
-                {
-                    icon: <ScaleIcon/>,
-                    name: "Product Units",
-                    path: "/product-units",
-                },
             ],
         },
         {
             name: "inventory",
             items: [
                 {
-                    icon: <WarehouseIcon/>,
+                    icon: <WarehouseIcon />,
                     name: "Warehouse",
-                    path: "/warehouse",
+                    path: "/warehouse",  // This could be the default sub-item path
                     subItems: [
-                        {name: "Stock Levels", path: "/inventory/stock"},
-                        {name: "Movements", path: "/inventory/movements"}
+                        {
+                            name: "ALL Warehouse",
+                            path: "/warehouse",
+                            icon: <BoxesIcon className="w-4 h-4" />
+                        },
+                        {
+                            name: "Stock Levels",
+                            path: "/warehouse/stock",
+                            icon: <LayersIcon className="w-4 h-4" />
+                        },
+                        {
+                            name: "Stock Adjustments",
+                            path: "/warehouse/adjustments",
+                            icon: <SlidersHorizontal className="w-4 h-4" />
+                        },
+                        {
+                            name: "Movements",
+                            path: "/warehouse/movements",
+                            icon: <RepeatIcon className="w-4 h-4" />
+                        }
                     ]
                 },
                 {
-                    icon: <TruckIcon/>,
+                    icon: <TruckIcon />,
                     name: "Suppliers",
                     path: "/suppliers",
                 },
                 {
-                    icon: <ShoppingCartIcon/>,
+                    icon: <ShoppingCartIcon />,
                     name: "Purchase",
                     path: "/purchase",
+                    subItems: [
+                        {
+                            name: "Purchase Orders",
+                            path: "/purchase/orders",
+                            icon: <FileTextIcon className="w-4 h-4" />
+                        },
+                        {
+                            name: "Purchase History",
+                            path: "/purchase/history",
+                            icon: <ClockIcon className="w-4 h-4" />
+                        }
+
+                    ]
                 },
-            ],
+                // Optional additional main items
+                {
+                    icon: <PieChart />,
+                    name: "Reports",
+                    path: "/inventory/reports",
+                    subItems: [
+                        {
+                            name: "Inventory Valuation",
+                            path: "/inventory/reports/valuation",
+                            icon: <TrendingUpIcon className="w-4 h-4" />
+                        },
+                        {
+                            name: "Stock Aging",
+                            path: "/inventory/reports/aging",
+                            icon: <HourglassIcon className="w-4 h-4" />
+                        }
+                    ]
+                }
+            ]
         },
         {
             name: "administrator",
@@ -121,7 +164,7 @@ const useNavConfig = () => {
                     path: "/currency",
                 },
                 {
-                    icon: <SettingsIcon/>,
+                    icon: <Settings/>,
                     name: "Settings",
                     path: "/settings",
                 },
@@ -140,7 +183,15 @@ const AppSidebar: React.FC = () => {
     const allNavGroups = useNavConfig();
 
     // Memoize the active path check
-    const isActive = useCallback((path: string) => pathname.includes(path), [pathname]);
+    const isActive = useCallback(
+        (path: string) => {
+            if (path === "/") {
+                return pathname === "/";
+            }
+            return pathname.startsWith(path);
+        },
+        [pathname]
+    );
 
     // Check if current path matches any submenu item on route change
     useEffect(() => {
@@ -288,7 +339,6 @@ const AppSidebar: React.FC = () => {
     MenuItem.displayName = 'MenuItem';
 
 
-    // Memoized submenu item component
     const SubMenuItem = React.memo(({
                                         subItem,
                                         isActive
@@ -302,34 +352,26 @@ const AppSidebar: React.FC = () => {
             <li key={subItem.path}>
                 <Link
                     href={subItem.path}
-                    className={`menu-dropdown-item ${
+                    className={`menu-dropdown-item flex items-center gap-2 ${
                         isItemActive ? "menu-dropdown-item-active" : "menu-dropdown-item-inactive"
                     }`}
                     aria-current={isItemActive ? "page" : undefined}
                 >
-                    {subItem.name}
-                    {(subItem.new || subItem.pro) && (
-                        <span className="flex items-center gap-1 ml-auto">
-                            {subItem.new && (
-                                <span className={`ml-auto ${
-                                    isItemActive ? "menu-dropdown-badge-active" : "menu-dropdown-badge-inactive"
-                                } menu-dropdown-badge`}>
-                                    new
-                                </span>
-                            )}
-                            {subItem.pro && (
-                                <span className={`ml-auto ${
-                                    isItemActive ? "menu-dropdown-badge-active" : "menu-dropdown-badge-inactive"
-                                } menu-dropdown-badge`}>
-                                    pro
-                                </span>
-                            )}
-                        </span>
+                    {/* Icon if present */}
+                    {subItem.icon && (
+                        <span className="text-muted-foreground">
+                        {subItem.icon}
+                    </span>
                     )}
+
+                    {/* Name */}
+                    <span>{subItem.name}</span>
+
                 </Link>
             </li>
         );
     });
+
     SubMenuItem.displayName = 'SubMenuItem';
 
 

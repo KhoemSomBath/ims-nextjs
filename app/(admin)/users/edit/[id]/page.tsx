@@ -1,5 +1,3 @@
-// app/roles/[id]/page.tsx
-// app/roles/[id]/page.tsx
 import type {Role} from "@/types/Role";
 import type {ApiResponse} from "@/types/BaseRespond";
 import {getWithAuth, putWithAuth} from "@/lib/api-client";
@@ -20,7 +18,7 @@ export default async function EditUserPage(props: { params: UserPageProps }) {
     const roles = await getWithAuth<ApiResponse<Role[]>>(`/role`, {tags: ['role']});
 
     if (isEdit) {
-        const data = await getWithAuth<ApiResponse<User>>(`/user/${params.id}`, {tags: ['role']});
+        const data = await getWithAuth<ApiResponse<User>>(`/user/${params.id}`, {tags: ['user']});
         user = data.data;
     }
 
