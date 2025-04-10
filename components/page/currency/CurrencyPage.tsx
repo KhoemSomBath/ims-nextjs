@@ -13,7 +13,7 @@ import {useRouter} from "next/navigation";
 import type {Currency} from "@/types/Currency";
 import {useTranslations} from "use-intl";
 import useDateFormat from "@/hooks/useDateFormat";
-import LocalNumeric from "@/hooks/useLocalNumeric";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface RolesPageProps {
     query: string,
@@ -28,7 +28,7 @@ export default function CurrencyPage({data, handleDelete, query}: RolesPageProps
     const commonT = useTranslations('Common');
     const t = useTranslations('Currencies');
     const {fullDateTime} = useDateFormat();
-    const { toLocalNumeric } = LocalNumeric();
+    const { toLocalNumeric } = useLocalNumeric();
 
     const actions: ReactTableAction<Currency>[] = [
         {

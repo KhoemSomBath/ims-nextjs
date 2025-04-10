@@ -13,6 +13,7 @@ import {useRouter} from "next/navigation";
 import type {Category} from "@/types/Category";
 import {useTranslations} from "use-intl";
 import useDateFormat from "@/hooks/useDateFormat";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface RolesPageProps {
     query: string,
@@ -27,6 +28,7 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
     const t = useTranslations('Common');
     const categoryT = useTranslations('Categories');
     const {fullDateTime} = useDateFormat();
+    const {toLocalNumeric} = useLocalNumeric();
 
     const userActions: ReactTableAction<Category>[] = [
         {
@@ -65,7 +67,7 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
         {
             accessorKey: 'id',
             header: t('no'),
-            cell: ({row}) => <span className="font-mono">{row.index + 1}</span>
+            cell: ({row}) => toLocalNumeric(row.index + 1)
         },
         {
             accessorKey: 'name',

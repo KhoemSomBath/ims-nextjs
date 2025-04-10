@@ -8,7 +8,8 @@ import {useToast} from "@/hooks/useToast";
 import Checkbox from "@/components/form/input/Checkbox";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
-import {useTranslations} from "use-intl"; // Import the Input component
+import {useTranslations} from "use-intl";
+import useLocalNumeric from "@/hooks/useLocalNumeric"; // Import the Input component
 
 interface RoleFormProps {
     role?: Role;
@@ -37,6 +38,7 @@ export default function RoleForm({role, allPermissions, onSubmitAction}: RoleFor
     const [error, setError] = useState<string | null>(null);
     const {showToast} = useToast();
     const router = useRouter();
+    const {toLocalNumeric} = useLocalNumeric();
 
     // Group and sort permissions by module
     const groupedPermissions = useMemo(() => {
@@ -109,7 +111,7 @@ export default function RoleForm({role, allPermissions, onSubmitAction}: RoleFor
                             {t('columns.permission')}
                         </h2>
                         <span className="text-sm text-muted-foreground">
-                            {selectedPermissions.length} {t('selected')}
+                            {toLocalNumeric(selectedPermissions.length)} {t('selected')}
                         </span>
                     </div>
 

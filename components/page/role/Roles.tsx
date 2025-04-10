@@ -13,6 +13,7 @@ import {IconButton} from "@/components/ui/button/IconButton";
 import {BaseDataTable} from "@/components/tables/BaseDataTable";
 import {useTranslations} from "use-intl";
 import useDateFormat from "@/hooks/useDateFormat";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface RolesPageProps {
     query: string,
@@ -29,6 +30,7 @@ export default function Roles({data, query, handleDelete}: RolesPageProps) {
     const commonT = useTranslations('Common');
     const t = useTranslations('Roles');
     const {fullDateTime} = useDateFormat();
+    const {toLocalNumeric} = useLocalNumeric();
 
     const userActions: ReactTableAction<Role>[] = [
         {
@@ -67,7 +69,7 @@ export default function Roles({data, query, handleDelete}: RolesPageProps) {
         {
             accessorKey: 'id',
             header: commonT('no'),
-            cell: ({row}) => <span className="font-mono">#{row.original.id}</span>
+            cell: ({row}) => toLocalNumeric(row.index + 1)
         },
         {
             accessorKey: 'name',

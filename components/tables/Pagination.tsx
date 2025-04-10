@@ -1,6 +1,6 @@
 import React from "react";
 import {useTranslations} from "use-intl";
-import LocalNumeric from "@/hooks/useLocalNumeric";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 type PaginationProps = {
   currentPage: number;
@@ -15,7 +15,7 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
 
     const t = useTranslations('Common');
-    const {toLocalNumeric} = LocalNumeric();
+    const {toLocalNumeric} = useLocalNumeric();
 
     const pagesAroundCurrent = Array.from(
         { length: Math.min(3, totalPages) },

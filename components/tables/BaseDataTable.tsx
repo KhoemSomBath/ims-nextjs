@@ -10,7 +10,7 @@ import Pagination from "@/components/tables/Pagination";
 import {cn} from "@/lib/utils";
 import type {ApiResponse} from "@/types/BaseRespond";
 import {useTranslations} from "use-intl";
-import LocalNumeric from "@/hooks/useLocalNumeric";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface ReactDataTableProps<TData> {
     pageData: ApiResponse<TData[]>,
@@ -42,7 +42,7 @@ export function BaseDataTable<TData>({
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const t = useTranslations('Common');
-    const {toLocalNumeric} = LocalNumeric();
+    const {toLocalNumeric} = useLocalNumeric();
 
     // Calculate display range
     const {data, paging} = pageData;

@@ -13,6 +13,7 @@ import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
 import {useTranslations} from "use-intl";
 import useDateFormat from "@/hooks/useDateFormat";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface RolesPageProps {
     query: string,
@@ -27,6 +28,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
     const commonT = useTranslations('Common');
     const t = useTranslations('Users');
     const {fullDateTime} = useDateFormat();
+    const {toLocalNumeric} = useLocalNumeric();
 
     const userActions: ReactTableAction<User>[] = [
         {
@@ -65,7 +67,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         {
             accessorKey: 'id',
             header: commonT('no'),
-            cell: ({row}) => <span className="font-mono">#{row.original.id}</span>
+            cell: ({row}) => toLocalNumeric(row.index + 1)
         },
         {
             accessorKey: 'name',

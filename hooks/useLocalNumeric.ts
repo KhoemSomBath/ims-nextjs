@@ -4,7 +4,7 @@ import { useLocale } from 'next-intl';
 import {toKhmerNumerals} from "@/lib/utils";
 
 
-export default function LocalNumeric() {
+export default function useLocalNumeric() {
     const locale = useLocale() as 'en' | 'kh';
 
     const toLocalNumeric = (
