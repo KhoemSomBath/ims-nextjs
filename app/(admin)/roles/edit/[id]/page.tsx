@@ -6,6 +6,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import React from "react";
 import type {Permission, Role} from "@/types/Role";
 import {type ApiResponse, initApiResponse} from "@/types/BaseRespond";
+import {getTranslations} from "next-intl/server";
 
 type RolePageProps = Promise<{ id: string }>
 
@@ -14,6 +15,9 @@ export default async function EditRolePage(props: { params: RolePageProps }) {
     const params = await props.params;
     const isEdit = !!params.id;
     let role: Role | null = null;
+
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Roles');
 
     if (isEdit) {
         const data = await getWithAuth<ApiResponse<Role>>(`/role/${params.id}`, {tags: ['role']});
@@ -52,9 +56,9 @@ export default async function EditRolePage(props: { params: RolePageProps }) {
         <div>
             <PageBreadcrumb
                 items={[
-                    { title: "Home", href: "/" },
-                    { title: "Roles", href: "/roles" },
-                    { title: "Edit Role" },
+                    { title: commonT('home'), href: "/" },
+                    { title: t('title'), href: "/roles" },
+                    { title: t('update') },
                 ]}
             />
             <div

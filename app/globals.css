@@ -305,3 +305,17 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* app/globals.css */
+body {
+  font-family: var(--font-outfit), var(--font-noto-sans-khmer), sans-serif;
+}
+
+/* Automatic font switching based on language */
+:lang(en) {
+  font-family: var(--font-outfit), sans-serif;
+}
+
+:lang(kh) {
+  font-family: var(--font-noto-sans-khmer), sans-serif;
+}

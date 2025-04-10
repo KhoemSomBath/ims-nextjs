@@ -8,9 +8,11 @@ import {ReactTableAction} from "@/types/table";
 import {Pencil, Trash2} from "lucide-react";
 import {ColumnDef} from "@tanstack/react-table";
 import {IconButton} from "@/components/ui/button/IconButton";
-import {cn, DateFormats} from "@/lib/utils";
+import {cn} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
+import {useTranslations} from "use-intl";
+import useDateFormat from "@/hooks/useDateFormat";
 
 interface RolesPageProps {
     query: string,
@@ -22,6 +24,9 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
 
     const {confirm, ConfirmModal} = useConfirmModal();
     const router = useRouter();
+    const commonT = useTranslations('Common');
+    const t = useTranslations('Users');
+    const {fullDateTime} = useDateFormat();
 
     const userActions: ReactTableAction<User>[] = [
         {
@@ -43,10 +48,10 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
                         }
                     },
                     {
-                        title: 'Confirm Deletion',
-                        description: `Are you sure you want to delete this ${user.name} user?`,
-                        confirmText: 'Delete',
-                        cancelText: 'Cancel',
+                        title: t("confirm_delete"),
+                        description: t('delete_description'),
+                        confirmText: commonT('delete'),
+                        cancelText: commonT('cancel'),
                         isDestructive: true
                     }
                 );
@@ -59,17 +64,17 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
     const getUserColumns = (actions?: ReactTableAction<User>[]): ColumnDef<User>[] => [
         {
             accessorKey: 'id',
-            header: 'No',
+            header: commonT('no'),
             cell: ({row}) => <span className="font-mono">#{row.original.id}</span>
         },
         {
             accessorKey: 'name',
-            header: 'Name',
+            header: t('columns.name'),
             cell: ({row}) => row.original.name
         },
         {
             accessorKey: 'role',
-            header: 'Role',
+            header: t('columns.role'),
             cell: ({row}) => (
                 <span
                     className="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-400/10 dark:text-brand-400">
@@ -79,17 +84,17 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         },
         {
             accessorKey: 'createdAt',
-            header: 'Created At',
-            cell: ({row}) => DateFormats.en(row.original.createdAt),
+            header: commonT('createdAt'),
+            cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
-            header: 'Updated At',
-            cell: ({row}) => DateFormats.en(row.original.createdAt),
+            header: commonT('updatedAt'),
+            cell: ({row}) => fullDateTime(row.original.updatedAt),
         },
         ...(actions ? [{
             id: 'actions',
-            header: 'Actions',
+            header: commonT('action'),
             cell: ({row}: { row: { original: User } }) => (
                 <div className="flex space-x-1">
                     {actions.map((action) => (

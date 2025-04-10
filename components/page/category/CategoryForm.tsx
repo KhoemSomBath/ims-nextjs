@@ -1,9 +1,9 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { useRouter } from "next/navigation";
-import type { ApiResponse } from "@/types/BaseRespond";
-import { useToast } from "@/hooks/useToast";
+import {useForm} from 'react-hook-form';
+import {useRouter} from "next/navigation";
+import type {ApiResponse} from "@/types/BaseRespond";
+import {useToast} from "@/hooks/useToast";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import {Category} from "@/types/Category";
@@ -17,15 +17,15 @@ interface CategoryFormProps {
     }) => Promise<ApiResponse<Category | null>>;
 }
 
-export default function CategoryForm({ category, onSubmitAction }: CategoryFormProps) {
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+export default function CategoryForm({category, onSubmitAction}: CategoryFormProps) {
+    const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm({
         defaultValues: {
             name: category?.name || '',
             description: category?.description || '',
         }
     });
 
-    const { showToast } = useToast();
+    const {showToast} = useToast();
     const router = useRouter();
     const t = useTranslations('Categories');
     const commonT = useTranslations('Common');
@@ -54,7 +54,8 @@ export default function CategoryForm({ category, onSubmitAction }: CategoryFormP
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col h-[80dvh] max-h-[80dvh]">
-            <div className="bg-background rounded-t-xl p-6 shadow-sm border border-gray-200 rounded-2xl dark:border-gray-800">
+            <div
+                className="bg-background rounded-t-xl p-6 shadow-sm border border-gray-200 rounded-2xl dark:border-gray-800">
                 <div className="grid grid-cols-1 gap-6">
                     <div className="space-y-2">
                         <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">

@@ -7,11 +7,12 @@ import {ReactTableAction} from "@/types/table";
 import {Pencil, Trash2} from "lucide-react";
 import {ColumnDef} from "@tanstack/react-table";
 import {IconButton} from "@/components/ui/button/IconButton";
-import {cn, DateFormats} from "@/lib/utils";
+import {cn} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
 import type {Category} from "@/types/Category";
 import {useTranslations} from "use-intl";
+import useDateFormat from "@/hooks/useDateFormat";
 
 interface RolesPageProps {
     query: string,
@@ -25,6 +26,7 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
     const router = useRouter();
     const t = useTranslations('Common');
     const categoryT = useTranslations('Categories');
+    const {fullDateTime} = useDateFormat();
 
     const userActions: ReactTableAction<Category>[] = [
         {
@@ -62,7 +64,7 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
     const getUserColumns = (actions?: ReactTableAction<Category>[]): ColumnDef<Category>[] => [
         {
             accessorKey: 'id',
-            header: categoryT('columns.no'),
+            header: t('no'),
             cell: ({row}) => <span className="font-mono">{row.index + 1}</span>
         },
         {
@@ -78,12 +80,12 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
         {
             accessorKey: 'createdAt',
             header: t('createdAt'),
-            cell: ({row}) => DateFormats.en(row.original.createdAt),
+            cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
             header: t('updatedAt'),
-            cell: ({row}) => DateFormats.en(row.original.createdAt),
+            cell: ({row}) => fullDateTime(row.original.updatedAt),
         },
         ...(actions ? [{
             id: 'actions',

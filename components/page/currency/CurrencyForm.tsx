@@ -1,8 +1,8 @@
 'use client';
-import { useForm } from 'react-hook-form';
-import { useRouter } from "next/navigation";
-import type { ApiResponse } from "@/types/BaseRespond";
-import { useToast } from "@/hooks/useToast";
+import {useForm} from 'react-hook-form';
+import {useRouter} from "next/navigation";
+import type {ApiResponse} from "@/types/BaseRespond";
+import {useToast} from "@/hooks/useToast";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 
@@ -18,11 +18,11 @@ interface CurrencyFormProps {
     onSubmitAction: (data: Currency) => Promise<ApiResponse<Currency | null>>;
 }
 
-export default function CurrencyForm({ currency, onSubmitAction }: CurrencyFormProps) {
+export default function CurrencyForm({currency, onSubmitAction}: CurrencyFormProps) {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting }
+        formState: {errors, isSubmitting}
     } = useForm({
         defaultValues: {
             code: currency?.code || '',
@@ -31,7 +31,7 @@ export default function CurrencyForm({ currency, onSubmitAction }: CurrencyFormP
         }
     });
 
-    const { showToast } = useToast();
+    const {showToast} = useToast();
     const router = useRouter();
 
     const onFormSubmit = async (data: Currency) => {
@@ -92,7 +92,7 @@ export default function CurrencyForm({ currency, onSubmitAction }: CurrencyFormP
                             Currency Name
                         </label>
                         <Input
-                            {...register('name', { required: 'Currency name is required' })}
+                            {...register('name', {required: 'Currency name is required'})}
                             error={!!errors.name}
                             hint={errors.name?.message}
                             id="name"

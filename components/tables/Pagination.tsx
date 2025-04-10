@@ -1,5 +1,6 @@
 import React from "react";
 import {useTranslations} from "use-intl";
+import LocalNumeric from "@/hooks/useLocalNumeric";
 
 type PaginationProps = {
   currentPage: number;
@@ -14,6 +15,7 @@ const Pagination: React.FC<PaginationProps> = ({
 }) => {
 
     const t = useTranslations('Common');
+    const {toLocalNumeric} = LocalNumeric();
 
     const pagesAroundCurrent = Array.from(
         { length: Math.min(3, totalPages) },
@@ -46,7 +48,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 : "text-gray-700 dark:text-gray-400"
             } flex w-10 items-center justify-center h-10 rounded-lg text-sm font-medium hover:bg-blue-500/[0.08] hover:text-brand-500 dark:hover:text-brand-500`}
           >
-            {page}
+              {toLocalNumeric(page)}
           </button>
         ))}
         {currentPage < totalPages - 2 && <span className="px-2">...</span>}

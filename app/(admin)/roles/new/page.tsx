@@ -5,8 +5,12 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import React from "react";
 import type {ApiResponse} from "@/types/BaseRespond";
 import type {Permission, Role} from "@/types/Role";
+import {getTranslations} from "next-intl/server";
 
 export default async function CreateRolesPage() {
+
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Roles');
 
     const permissions = await getWithAuth<ApiResponse<Permission[]>>(`/role/permissions`, {tags: ['permissions']});
 
@@ -40,9 +44,9 @@ export default async function CreateRolesPage() {
         <div>
             <PageBreadcrumb
                 items={[
-                    { title: "Home", href: "/" },
-                    { title: "Roles", href: "/roles" },
-                    { title: "New Role" },
+                    { title: commonT('home'), href: "/" },
+                    { title: t('title'), href: "/roles" },
+                    { title: t('create') },
                 ]}
             />
             <div className="w-full rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">

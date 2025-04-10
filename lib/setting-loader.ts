@@ -138,7 +138,6 @@ class ServerSettings {
                 throw new Error(`Failed to update setting: HTTP ${response.status}`);
             }
             const respond = await response.json() as ApiResponse<Setting>;
-            await this.forceRefresh();
             return respond;
         }
     }

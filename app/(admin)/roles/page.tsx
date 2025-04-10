@@ -7,6 +7,7 @@ import type {Metadata} from "next";
 import type {ApiResponse} from "@/types/BaseRespond";
 import type {Role} from "@/types/Role";
 import {Loading} from "@/components/common/Loading";
+import {getTranslations} from "next-intl/server";
 
 export const metadata: Metadata = {
     title: "Roles",
@@ -17,6 +18,10 @@ type RolesPageProps = Promise<{ page?: number, query?: string, from?: string }>
 
 
 export default async function RolesPage(props: { searchParams: RolesPageProps }) {
+
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Roles');
+
     const searchParams = await props.searchParams;
     const {page = 1, query = ''} = searchParams;
 
@@ -40,8 +45,8 @@ export default async function RolesPage(props: { searchParams: RolesPageProps })
         <div>
             <PageBreadcrumb
                 items={[
-                    { title: "Home", href: "/" },
-                    { title: "Roles" }
+                    { title: commonT('home'), href: "/" },
+                    { title: t('title') }
                 ]}
             />
             <Suspense fallback={<Loading

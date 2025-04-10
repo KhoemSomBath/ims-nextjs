@@ -1,19 +1,13 @@
-'use client';
+"use client";
+import React, {useRef} from "react";
+import {useTheme} from "next-themes";
+import {flushSync} from "react-dom";
 
-import { useTheme } from 'next-themes';
-import React, { useEffect, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
-
-export default function ThemeToggleAnimate() {
-    const { resolvedTheme, setTheme } = useTheme();
+export default function ThemeToggleTwo() {
+    const {resolvedTheme, setTheme} = useTheme();
     const ref = useRef<HTMLButtonElement>(null);
-    const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    const toggleDarkMode = async () => {
+    const toggleTheme = async () => {
         const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
 
         if (!ref.current || !document.startViewTransition ||
@@ -22,7 +16,7 @@ export default function ThemeToggleAnimate() {
             return;
         }
 
-        const { top, left, width, height } = ref.current.getBoundingClientRect();
+        const {top, left, width, height} = ref.current.getBoundingClientRect();
         const x = left + width / 2;
         const y = top + height / 2;
         const maxRadius = Math.hypot(
@@ -51,17 +45,11 @@ export default function ThemeToggleAnimate() {
         });
     };
 
-    if (!mounted) {
-        return (
-            <div className="w-12 h-12" aria-hidden="true" />
-        );
-    }
-
     return (
         <button
             ref={ref}
-            onClick={toggleDarkMode}
-            className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+            onClick={toggleTheme}
+            className="inline-flex size-14 items-center justify-center rounded-full bg-brand-500 text-white transition-colors hover:bg-brand-600"
         >
             <svg
                 className="hidden dark:block"
