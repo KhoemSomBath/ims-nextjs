@@ -9,7 +9,6 @@ import React from "react";
 import {NextIntlClientProvider} from "next-intl";
 import {getSetting} from "@/lib/setting-loader";
 import {SettingLabel} from "@/types/settings";
-import {getMessages} from "next-intl/server";
 
 export const metadata: Metadata = {
     title: {
