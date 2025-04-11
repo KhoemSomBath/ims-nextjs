@@ -1,61 +1,72 @@
-name: Docker Build & Publish
+name: Docker CI
 
 on:
   push:
-    branches: [main]
+    branches: [main] # only triggers on main
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  push_to_registries:
-    name: Push Docker image to GHCR
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      id-token: write  # Required for attestations
-
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Explicitly pass token
 
     steps:
-      - name: Check out repository code
+      - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          install: true
+          node-version: 20
+          cache: 'pnpm'
 
-      - name: Log in to GitHub Container Registry
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Next.js app
+        run: pnpm build
+
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ env.GITHUB_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract repository name (lowercase)
-        id: repo
-        run: |
-          REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
-          echo "REPO_LOWER=${REPO_LOWER}" >> $GITHUB_OUTPUT
-          echo "Using repository: ${REPO_LOWER}"
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Restore BuildKit cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: buildx-${{ github.sha }}
+          restore-keys: |
+            buildx-
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:latest
-          labels: |
-            org.opencontainers.image.source=${{ github.repositoryUrl }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: true  # Enable SBOM and attestations
-          sbom: true
-
-      - name: Verify pushed image
         run: |
-          echo "Image successfully pushed to:"
-          echo "  - ghcr.io/${{ steps.repo.outputs.REPO_LOWER }}:latest"
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker buildx build \
+            --builder default \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            --tag ${{ env.REGISTRY }}/$REPO_NAME:latest \
+            --push \
+            .
+
+      - name: Move updated cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
