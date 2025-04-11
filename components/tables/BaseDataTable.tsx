@@ -9,7 +9,7 @@ import Button from "@/components/ui/button/Button";
 import Pagination from "@/components/tables/Pagination";
 import {cn} from "@/lib/utils";
 import type {ApiResponse} from "@/types/BaseRespond";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface ReactDataTableProps<TData> {
@@ -31,14 +31,13 @@ interface ReactDataTableProps<TData> {
 export function BaseDataTable<TData>({
                                          pageData,
                                          columns,
-                                         query = '',
                                          addNewLink,
                                          actions,
                                          className,
                                          emptyState,
                                          isPagination = true,
                                      }: ReactDataTableProps<TData>) {
-    const router = useRouter();
+    const {replace, push} = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const t = useTranslations('Common');
@@ -53,9 +52,9 @@ export function BaseDataTable<TData>({
     const endElement = Math.min(currentPage * size, totals);
 
     // Search state
-    const [searchQuery, setSearchQuery] = useState(query);
-    const [isSearching, setIsSearching] = useState(false);
     const currentQuery = searchParams.get('query') || '';
+    const [searchQuery, setSearchQuery] = useState(currentQuery);
+    const [isSearching, setIsSearching] = useState(false);
     const showClearIcon = searchQuery === currentQuery && searchQuery !== '';
 
     // Add actions column if provided
@@ -111,7 +110,7 @@ export function BaseDataTable<TData>({
         params.delete('page');
 
         setTimeout(() => {
-            router.replace(`${pathname}?${params.toString()}`);
+            replace(`${pathname}?${params.toString()}`);
             setIsSearching(false);
         }, 500);
     };
@@ -121,14 +120,14 @@ export function BaseDataTable<TData>({
         if (currentQuery) {
             const params = new URLSearchParams(searchParams);
             params.delete('query');
-            router.replace(`${pathname}?${params.toString()}`);
+            replace(`${pathname}?${params.toString()}`);
         }
     };
 
     const handlePageChange = (page: number) => {
         const params = new URLSearchParams(searchParams);
         params.set('page', page.toString());
-        router.replace(`${pathname}?${params.toString()}`);
+        replace(`${pathname}?${params.toString()}`);
     };
 
     return (
@@ -138,7 +137,7 @@ export function BaseDataTable<TData>({
                 <div className="flex-1">
                     {addNewLink && (
                         <Button
-                            onClick={() => router.push(addNewLink)}
+                            onClick={() => push(addNewLink)}
                             size="sm"
                             variant="primary"
                             className="gap-2"
@@ -166,7 +165,7 @@ export function BaseDataTable<TData>({
 
                         <input
                             type="text"
-                            value={searchQuery}
+                            defaultValue={currentQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') handleSearch();

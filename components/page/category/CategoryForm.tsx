@@ -7,7 +7,7 @@ import {useToast} from "@/hooks/useToast";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import {Category} from "@/types/Category";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 
 interface CategoryFormProps {
     category?: Category;

@@ -11,9 +11,9 @@ import {cn} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
 import type {Category} from "@/types/Category";
-import {useTranslations} from "use-intl";
 import useDateFormat from "@/hooks/useDateFormat";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
+import {useTranslations} from "next-intl";
 
 interface RolesPageProps {
     query: string,

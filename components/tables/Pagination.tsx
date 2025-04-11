@@ -1,5 +1,5 @@
 import React from "react";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 type PaginationProps = {
