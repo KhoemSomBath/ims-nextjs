@@ -2,7 +2,7 @@ name: Docker CI
 
 on:
   push:
-    branches: [main] # only triggers on main
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -26,10 +26,16 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+      # Install specific pnpm version (10.8.0) using Corepack
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install pnpm@10.8.0
+        run: corepack prepare pnpm@10.8.0 --activate
+
+      # Verify pnpm version
+      - name: Check pnpm version
+        run: pnpm --version
 
       - name: Install dependencies
         run: pnpm install
@@ -37,6 +43,7 @@ jobs:
       - name: Build Next.js app
         run: pnpm build
 
+      # Docker build and push steps remain unchanged
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
