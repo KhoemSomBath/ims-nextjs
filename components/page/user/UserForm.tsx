@@ -9,6 +9,7 @@ import {useToast} from "@/hooks/useToast";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Select from "@/components/form/Select";
+import {useTranslations} from "use-intl";
 
 interface UserFormProps {
     user?: User;
@@ -23,6 +24,9 @@ interface UserFormProps {
 }
 
 export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps) {
+
+    const t = useTranslations('Users');
+    const commonT = useTranslations('Common');
 
     const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm({
         defaultValues: {
@@ -80,21 +84,17 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label htmlFor="username" className="block text-sm font-medium text-muted-foreground">
-                            Username
+                            {t('columns.username')}
                         </label>
                         <Input
                             {...register('username', {
-                                required: 'Username is required',
-                                minLength: {
-                                    value: 3,
-                                    message: 'Username must be at least 3 characters'
-                                }
+                                required: t('validation.username'),
                             })}
                             error={!!errors.username}
                             hint={errors.username?.message}
                             id="username"
                             name="username"
-                            placeholder="Enter username"
+                            placeholder={t('enter.username')}
                             className="w-full"
                             disabled={isEditing}
                         />
@@ -102,15 +102,15 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
 
                     <div className="space-y-2">
                         <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">
-                            Full Name
+                            {t('columns.name')}
                         </label>
                         <Input
-                            {...register('name', {required: 'Full name is required'})}
+                            {...register('name', {required: t('validation.name')})}
                             error={!!errors.name}
                             hint={errors.name?.message}
                             id="name"
                             name="name"
-                            placeholder="Enter full name"
+                            placeholder={t('enter.name')}
                             className="w-full"
                         />
                     </div>
@@ -118,18 +118,18 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
                     {!isEditing && (
                         <div className="space-y-2">
                             <label htmlFor="password" className="block text-sm font-medium text-muted-foreground">
-                                Password
+                                {t('columns.password')}
                             </label>
                             <Input
                                 {...register('password', {
-                                    required: !isEditing ? 'Password is required' : false,
+                                    required: !isEditing ? t('validation.password') : false,
                                 })}
                                 error={!!errors.password}
                                 hint={errors.password?.message}
                                 id="password"
                                 name="password"
                                 type="password"
-                                placeholder="Enter password"
+                                placeholder={t('enter.password')}
                                 className="w-full"
                             />
                         </div>
@@ -138,7 +138,7 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
                     {isEditing && (
                         <div className="space-y-2">
                             <label htmlFor="password" className="block text-sm font-medium text-muted-foreground">
-                                New Password (leave blank to keep current)
+                                {t('enter.new-password')}
                             </label>
                             <Input
                                 {...register('password')}
@@ -147,7 +147,7 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
                                 id="password"
                                 name="password"
                                 type="password"
-                                placeholder="Enter new password"
+                                placeholder={t('enter.password')}
                                 className="w-full"
                             />
                         </div>
@@ -155,7 +155,7 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
 
                     <div className="space-y-2">
                         <label htmlFor="roleId" className="block text-sm font-medium text-muted-foreground">
-                            Role
+                            {t('columns.role')}
                         </label>
 
                         <Select
@@ -164,8 +164,8 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
                                 label: role.name
                             }))}
                             defaultValue={user?.role.id.toString()}
-                            placeholder="Select role"
-                            register={register("roleId", {required: "Please select a role"})}
+                            placeholder={t('enter.role')}
+                            register={register("roleId", {required: t('validation.role')})}
                             error={!!errors.roleId}
                             hint={errors.roleId?.message}
                         />
@@ -175,7 +175,7 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
 
                 <div className="flex justify-end gap-3 mt-4">
                     <Button type="button" size="sm" variant="outline" onClick={() => router.back()}>
-                        Back
+                        {commonT('back')}
                     </Button>
                     <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? (
@@ -189,7 +189,7 @@ export default function UserForm({user, allRoles, onSubmitAction}: UserFormProps
                                 </svg>
                                 Processing...
                             </>
-                        ) : user ? 'Update User' : 'Create User'}
+                        ) : user ? t('update') : t('create')}
                     </Button>
                 </div>
             </div>

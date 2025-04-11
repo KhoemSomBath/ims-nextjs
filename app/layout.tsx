@@ -1,4 +1,4 @@
-import {Outfit} from 'next/font/google';
+import {Noto_Sans_Khmer, Outfit} from 'next/font/google';
 import './globals.css';
 import {SidebarProvider} from '@/context/SidebarContext';
 import {ThemeProvider} from "next-themes";
@@ -36,8 +36,17 @@ export const viewport: Viewport = {
 }
 
 const outfit = Outfit({
-    subsets: ["latin"],
+    subsets: ['latin'],
+    variable: '--font-outfit',
+    display: 'swap',
 });
+
+const notoSansKhmer = Noto_Sans_Khmer({
+    subsets: ['khmer'],
+    variable: '--font-noto-sans-khmer',
+    display: 'swap',
+});
+
 
 export default async function RootLayout({
                                              children,
@@ -48,24 +57,27 @@ export default async function RootLayout({
     const locale = await getSetting<string>(SettingLabel.IMS_DEFAULT_LANGUAGE)
 
     return (
-        <html lang={locale} suppressHydrationWarning className={`${outfit}`}>
-        <body className={`${outfit.className} bg-white dark:bg-gray-900`}>
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            storageKey="ims-theme"
-        >
-            <NextIntlClientProvider>
+        <html lang={locale} suppressHydrationWarning>
+        <body  className={`${locale === 'kh' ? notoSansKhmer.variable : outfit.variable} font-sans bg-white dark:bg-gray-900`}>
+        <NextIntlClientProvider locale={locale}>
+
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                storageKey="ims-theme"
+            >
                 <AuthProvider user={user}>
                     <SidebarProvider>
                         {children}
                     </SidebarProvider>
                 </AuthProvider>
-            </NextIntlClientProvider>
 
-        </ThemeProvider>
+            </ThemeProvider>
+
+        </NextIntlClientProvider>
+
         </body>
         </html>
     );

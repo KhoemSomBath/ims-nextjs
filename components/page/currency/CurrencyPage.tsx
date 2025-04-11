@@ -7,10 +7,13 @@ import {ReactTableAction} from "@/types/table";
 import {Pencil, Trash2} from "lucide-react";
 import {ColumnDef} from "@tanstack/react-table";
 import {IconButton} from "@/components/ui/button/IconButton";
-import {cn, DateFormats} from "@/lib/utils";
+import {cn} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
 import type {Currency} from "@/types/Currency";
+import {useTranslations} from "use-intl";
+import useDateFormat from "@/hooks/useDateFormat";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface RolesPageProps {
     query: string,
@@ -22,6 +25,10 @@ export default function CurrencyPage({data, handleDelete, query}: RolesPageProps
 
     const {confirm, ConfirmModal} = useConfirmModal();
     const router = useRouter();
+    const commonT = useTranslations('Common');
+    const t = useTranslations('Currencies');
+    const {fullDateTime} = useDateFormat();
+    const { toLocalNumeric } = useLocalNumeric();
 
     const actions: ReactTableAction<Currency>[] = [
         {
@@ -43,10 +50,10 @@ export default function CurrencyPage({data, handleDelete, query}: RolesPageProps
                         }
                     },
                     {
-                        title: 'Confirm Deletion',
-                        description: `Are you sure you want to delete this ${item.name} currency?`,
-                        confirmText: 'Delete',
-                        cancelText: 'Cancel',
+                        title: t("confirm_delete"),
+                        description: t('delete_description'),
+                        confirmText: commonT('delete'),
+                        cancelText: commonT('cancel'),
                         isDestructive: true
                     }
                 );
@@ -59,37 +66,37 @@ export default function CurrencyPage({data, handleDelete, query}: RolesPageProps
     const getColumns = (actions?: ReactTableAction<Currency>[]): ColumnDef<Currency>[] => [
         {
             accessorKey: 'id',
-            header: 'No',
-            cell: ({row}) => <span className="font-mono">#{row.original.id}</span>
+            header: commonT('no'),
+            cell: ({row}) => toLocalNumeric(row.index + 1)
         },
         {
             accessorKey: 'name',
-            header: 'Name',
+            header: t('columns.name'),
             cell: ({row}) => row.original.name
         },
         {
             accessorKey: 'code',
-            header: 'Code',
+            header: t('columns.symbol'),
             cell: ({row}) => row.original.code
         },
         {
             accessorKey: 'rate',
-            header: 'Rate',
-            cell: ({row}) => row.original.rate
+            header: t('columns.rate'),
+            cell: ({row}) => toLocalNumeric(row.original.rate)
         },
         {
             accessorKey: 'createdAt',
-            header: 'Created At',
-            cell: ({row}) => DateFormats.en(row.original.createdAt),
+            header: commonT('createdAt'),
+            cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
-            header: 'Updated At',
-            cell: ({row}) => DateFormats.en(row.original.createdAt),
+            header: commonT('updatedAt'),
+            cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         ...(actions ? [{
             id: 'actions',
-            header: 'Actions',
+            header: commonT('action'),
             cell: ({row}: { row: { original: Currency } }) => (
                 <div className="flex space-x-1">
                     {actions.map((action) => (

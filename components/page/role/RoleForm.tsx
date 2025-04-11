@@ -1,13 +1,15 @@
 'use client';
-import React, { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, {useMemo, useState} from 'react';
+import {useForm} from 'react-hook-form';
 import type {Permission, Role} from "@/types/Role";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 import type {ApiResponse} from "@/types/BaseRespond";
-import { useToast } from "@/hooks/useToast";
+import {useToast} from "@/hooks/useToast";
 import Checkbox from "@/components/form/input/Checkbox";
 import Button from "@/components/ui/button/Button";
-import Input from "@/components/form/input/InputField"; // Import the Input component
+import Input from "@/components/form/input/InputField";
+import {useTranslations} from "use-intl";
+import useLocalNumeric from "@/hooks/useLocalNumeric"; // Import the Input component
 
 interface RoleFormProps {
     role?: Role;
@@ -18,9 +20,12 @@ interface RoleFormProps {
     }) => Promise<ApiResponse<Role | null>>;
 }
 
-export default function RoleForm({ role, allPermissions, onSubmitAction }: RoleFormProps) {
+export default function RoleForm({role, allPermissions, onSubmitAction}: RoleFormProps) {
 
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    const t = useTranslations('Roles');
+    const commonT = useTranslations('Common');
+
+    const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm({
         defaultValues: {
             name: role?.name || '',
             permissionIds: role?.permissions.map(p => p.id) || []
@@ -31,8 +36,9 @@ export default function RoleForm({ role, allPermissions, onSubmitAction }: RoleF
         role?.permissions.map(p => p.id) || []
     );
     const [error, setError] = useState<string | null>(null);
-    const { showToast } = useToast();
+    const {showToast} = useToast();
     const router = useRouter();
+    const {toLocalNumeric} = useLocalNumeric();
 
     // Group and sort permissions by module
     const groupedPermissions = useMemo(() => {
@@ -77,23 +83,21 @@ export default function RoleForm({ role, allPermissions, onSubmitAction }: RoleF
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col h-[80dvh] max-h-[80dvh]">
             {/* Header and Role Name */}
-            <div className="bg-background rounded-t-xl p-6 shadow-sm border border-gray-200 rounded-2xl dark:border-gray-800 ">
-                <h1 className="text-xl font-semibold text-foreground mb-6">
-                    {role ? 'Edit Role' : 'Create New Role'}
-                </h1>
+            <div
+                className="bg-background rounded-t-xl p-6 shadow-sm border border-gray-200 rounded-2xl dark:border-gray-800 ">
 
                 <div className="space-y-2">
                     <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">
-                        Role Name
+                        {t('columns.name')} {t('columns.role')}
                     </label>
                     <Input
-                        {...register('name', { required: 'Role name is required' })}
+                        {...register('name', {required: t('validation.name')})}
                         error={!!errors.name}
                         hint={errors.name?.message}
                         id="name"
                         name="name"
                         defaultValue={role?.name || ''}
-                        placeholder="Enter role name"
+                        placeholder={t('enter.name')}
                         className="w-full"
                     />
                 </div>
@@ -104,10 +108,10 @@ export default function RoleForm({ role, allPermissions, onSubmitAction }: RoleF
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-lg font-semibold text-foreground">
-                            Permissions
+                            {t('columns.permission')}
                         </h2>
                         <span className="text-sm text-muted-foreground">
-                            {selectedPermissions.length} selected
+                            {toLocalNumeric(selectedPermissions.length)} {t('selected')}
                         </span>
                     </div>
 
@@ -145,7 +149,7 @@ export default function RoleForm({ role, allPermissions, onSubmitAction }: RoleF
                 )}
                 <div className="flex justify-end gap-3">
                     <Button type="button" size="sm" variant="outline" onClick={() => router.back()}>
-                        Back
+                        {commonT('back')}
                     </Button>
                     <Button
                         disabled={isSubmitting}
@@ -161,7 +165,7 @@ export default function RoleForm({ role, allPermissions, onSubmitAction }: RoleF
                                 </svg>
                                 Processing...
                             </>
-                        ) : role ? 'Update Role' : 'Create Role'}
+                        ) : role ? t('update') : t('create')}
                     </Button>
                 </div>
             </div>

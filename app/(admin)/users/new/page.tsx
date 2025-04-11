@@ -6,8 +6,11 @@ import React from "react";
 import UserForm from "@/components/page/user/UserForm";
 import type {User} from "@/types/User";
 import {revalidateTag} from "next/cache";
+import {getTranslations} from "next-intl/server";
 
 export default async function CreateUserPage() {
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Users');
 
     const roles = await getWithAuth<ApiResponse<Role[]>>(`/role`, {tags: ['role']});
 
@@ -49,9 +52,9 @@ export default async function CreateUserPage() {
         <div>
             <PageBreadcrumb
                 items={[
-                    { title: "Home", href: "/" },
-                    { title: "User", href: "/users" },
-                    { title: "New User" }
+                    { title: commonT('home'), href: "/" },
+                    { title: t('title'), href: "/users" },
+                    { title: t('create') }
                 ]}
             />
             <div

@@ -1,43 +1,43 @@
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
+import type {Metadata} from "next";
 import React, {Suspense} from "react";
 import {deleteWithAuth, getWithAuth} from "@/lib/api-client";
-import Roles from "@/components/page/role/Roles";
-import {revalidateTag} from "next/cache";
-import type {Metadata} from "next";
 import type {ApiResponse} from "@/types/BaseRespond";
-import type {Role} from "@/types/Role";
+import {revalidateTag} from "next/cache";
 import {Loading} from "@/components/common/Loading";
 import {getTranslations} from "next-intl/server";
+import {Category} from "@/types/Category";
+import Categories from "@/components/page/category/Categories";
+
 
 export const metadata: Metadata = {
-    title: "Roles",
-    description: "This is Role Page in IMS",
+    title: "Categories",
+    description: "This is Categories Page in IMS",
 };
 
-type RolesPageProps = Promise<{ page?: number, query?: string, from?: string }>
+type PageProps = Promise<{ page?: number, query?: string, from?: string }>
 
 
-export default async function RolesPage(props: { searchParams: RolesPageProps }) {
-
-    const commonT = await getTranslations('Common');
-    const t = await getTranslations('Roles');
-
+export default async function CategoriesPage(props: { searchParams: PageProps }) {
     const searchParams = await props.searchParams;
     const {page = 1, query = ''} = searchParams;
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Categories');
 
-    const data = await getWithAuth<ApiResponse<Role[]>>('/role', {
+
+    const data = await getWithAuth<ApiResponse<Category[]>>('/category', {
         params: {
             page: page - 1,
             query: query || '',
         },
-        tags: ['role'],
+        tags: ['category'],
     })
 
     async function handleDelete(id: string | number) {
         'use server'
-        const data = await deleteWithAuth<ApiResponse<void>>(`/role/${id}`, {tags: ['role'],});
+        const data = await deleteWithAuth<ApiResponse<void>>(`/user/${id}`, {tags: ['category'],});
         if (data.status == 200)
-            revalidateTag('role')
+            revalidateTag('category')
         return data;
     }
 
@@ -49,14 +49,15 @@ export default async function RolesPage(props: { searchParams: RolesPageProps })
                     { title: t('title') }
                 ]}
             />
-            <Suspense fallback={<Loading
+            <Suspense key={`user-${page}-${query}`} fallback={<Loading
                 fullScreen
                 withText={false}
                 size="lg"
                 variant="brand"
             />}>
-                <Roles addNewLink={'/roles/new'} query={query} data={data} handleDelete={handleDelete}/>
+                <Categories query={query} data={data} handleDelete={handleDelete}/>
             </Suspense>
         </div>
     );
+
 }

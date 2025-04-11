@@ -1,20 +1,16 @@
 // components/ReactDataTable.tsx
 'use client';
 
-import {
-    useReactTable,
-    getCoreRowModel,
-    flexRender,
-    type ColumnDef,
-} from '@tanstack/react-table';
+import {type ColumnDef, flexRender, getCoreRowModel, useReactTable,} from '@tanstack/react-table';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {Loader2, PlusCircle, Search, X} from 'lucide-react';
-import React, {useState, useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import Button from "@/components/ui/button/Button";
 import Pagination from "@/components/tables/Pagination";
 import {cn} from "@/lib/utils";
 import type {ApiResponse} from "@/types/BaseRespond";
 import {useTranslations} from "use-intl";
+import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface ReactDataTableProps<TData> {
     pageData: ApiResponse<TData[]>,
@@ -46,6 +42,7 @@ export function BaseDataTable<TData>({
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const t = useTranslations('Common');
+    const {toLocalNumeric} = useLocalNumeric();
 
     // Calculate display range
     const {data, paging} = pageData;
@@ -250,9 +247,10 @@ export function BaseDataTable<TData>({
             {isPagination &&
                 <div className="flex items-center justify-between border-t pt-4 border-gray-200 dark:border-gray-700">
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {t('show')} <span className="font-semibold"> {paging.totals ? startElement : 0} </span>{t('to')}
-                        <span className="font-semibold"> {endElement} </span> {t('of')}
-                        <span className="font-semibold"> {paging.totals} </span> {t('elements')}
+                        {t('show')} <span
+                        className="font-semibold"> {toLocalNumeric(paging.totals ? startElement : 0)} </span>{t('to')}
+                        <span className="font-semibold"> {toLocalNumeric(endElement)} </span> {t('of')}
+                        <span className="font-semibold"> {toLocalNumeric(paging.totals)} </span> {t('elements')}
                     </div>
                     <Pagination
                         currentPage={paging.page + 1}

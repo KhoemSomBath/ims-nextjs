@@ -1,4 +1,4 @@
-import ThemeToggleTwo from "../../components/common/ThemeTogglerTwo";
+import ThemeToggleTwo from "../../components/common/ThemeToggleTwo";
 
 import React from "react";
 import {ThemeProvider} from "next-themes";

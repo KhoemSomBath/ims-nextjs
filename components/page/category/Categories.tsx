@@ -2,7 +2,6 @@
 
 import React from "react";
 import type {ApiResponse} from "@/types/BaseRespond";
-import type {User} from "@/types/User";
 import {BaseDataTable} from "@/components/tables/BaseDataTable";
 import {ReactTableAction} from "@/types/table";
 import {Pencil, Trash2} from "lucide-react";
@@ -11,49 +10,50 @@ import {IconButton} from "@/components/ui/button/IconButton";
 import {cn} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
+import type {Category} from "@/types/Category";
 import {useTranslations} from "use-intl";
 import useDateFormat from "@/hooks/useDateFormat";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface RolesPageProps {
     query: string,
-    data: ApiResponse<User[]>,
+    data: ApiResponse<Category[]>,
     handleDelete?: (id: string | number) => Promise<ApiResponse<void>>,
 }
 
-export default function Users({data, handleDelete, query}: RolesPageProps) {
+export default function Categories({data, handleDelete, query}: RolesPageProps) {
 
     const {confirm, ConfirmModal} = useConfirmModal();
     const router = useRouter();
-    const commonT = useTranslations('Common');
-    const t = useTranslations('Users');
+    const t = useTranslations('Common');
+    const categoryT = useTranslations('Categories');
     const {fullDateTime} = useDateFormat();
     const {toLocalNumeric} = useLocalNumeric();
 
-    const userActions: ReactTableAction<User>[] = [
+    const userActions: ReactTableAction<Category>[] = [
         {
             name: 'Edit',
             icon: <Pencil className="h-4 w-4"/>,
-            onClick: (user) => {
-                router.push(`/users/edit/${user.id}`);
+            onClick: (item) => {
+                router.push(`/categories/edit/${item.id}`);
             },
             variant: 'outline'
         },
         {
             name: 'Delete',
             icon: <Trash2 className="h-4 w-4"/>,
-            onClick: (user) => {
+            onClick: (item) => {
                 confirm(
                     async () => {
                         if (handleDelete) {
-                            await handleDelete(user.id);
+                            await handleDelete(item.id);
                         }
                     },
                     {
-                        title: t("confirm_delete"),
-                        description: t('delete_description'),
-                        confirmText: commonT('delete'),
-                        cancelText: commonT('cancel'),
+                        title: t('confirm_deletion'),
+                        description: categoryT('delete_description'),
+                        confirmText: 'Delete',
+                        cancelText: 'Cancel',
                         isDestructive: true
                     }
                 );
@@ -63,41 +63,36 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         }
     ];
 
-    const getUserColumns = (actions?: ReactTableAction<User>[]): ColumnDef<User>[] => [
+    const getUserColumns = (actions?: ReactTableAction<Category>[]): ColumnDef<Category>[] => [
         {
             accessorKey: 'id',
-            header: commonT('no'),
+            header: t('no'),
             cell: ({row}) => toLocalNumeric(row.index + 1)
         },
         {
             accessorKey: 'name',
-            header: t('columns.name'),
+            header: categoryT('columns.name'),
             cell: ({row}) => row.original.name
         },
         {
-            accessorKey: 'role',
-            header: t('columns.role'),
-            cell: ({row}) => (
-                <span
-                    className="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-400/10 dark:text-brand-400">
-        {row.original.role.name}
-      </span>
-            )
+            accessorKey: 'description',
+            header: categoryT('columns.description'),
+            cell: ({row}) => row.original.description
         },
         {
             accessorKey: 'createdAt',
-            header: commonT('createdAt'),
+            header: t('createdAt'),
             cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
-            header: commonT('updatedAt'),
+            header: t('updatedAt'),
             cell: ({row}) => fullDateTime(row.original.updatedAt),
         },
         ...(actions ? [{
             id: 'actions',
-            header: commonT('action'),
-            cell: ({row}: { row: { original: User } }) => (
+            header: t('action'),
+            cell: ({row}: { row: { original: Category } }) => (
                 <div className="flex space-x-1">
                     {actions.map((action) => (
                         <IconButton
@@ -129,7 +124,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
             <BaseDataTable
                 pageData={data}
                 query={query}
-                addNewLink={'users/new'}
+                addNewLink={'categories/new'}
                 columns={getUserColumns(userActions)}
             />
             <ConfirmModal/>

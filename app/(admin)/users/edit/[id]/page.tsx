@@ -1,5 +1,3 @@
-// app/roles/[id]/page.tsx
-// app/roles/[id]/page.tsx
 import type {Role} from "@/types/Role";
 import type {ApiResponse} from "@/types/BaseRespond";
 import {getWithAuth, putWithAuth} from "@/lib/api-client";
@@ -8,6 +6,7 @@ import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import React from "react";
 import type {User} from "@/types/User";
 import UserForm from "@/components/page/user/UserForm";
+import {getTranslations} from "next-intl/server";
 
 type UserPageProps = Promise<{ id: string }>
 
@@ -17,10 +16,13 @@ export default async function EditUserPage(props: { params: UserPageProps }) {
     const isEdit = !!params.id;
     let user: User | undefined = undefined;
 
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Users');
+
     const roles = await getWithAuth<ApiResponse<Role[]>>(`/role`, {tags: ['role']});
 
     if (isEdit) {
-        const data = await getWithAuth<ApiResponse<User>>(`/user/${params.id}`, {tags: ['role']});
+        const data = await getWithAuth<ApiResponse<User>>(`/user/${params.id}`, {tags: ['user']});
         user = data.data;
     }
 
@@ -38,7 +40,6 @@ export default async function EditUserPage(props: { params: UserPageProps }) {
         const body = {
             username: data.username,
             name: data.name,
-            password: data.password,
             version: 0,
             role: {
                 id: data.roleId,
@@ -47,14 +48,15 @@ export default async function EditUserPage(props: { params: UserPageProps }) {
             status: data.status,
         }
 
+
         const respond = await putWithAuth<ApiResponse<User>, {
             username: string;
             name: string;
-            password: string | undefined;
             role: { id: number };
             status: boolean
         }>(`/user/${user?.id}`, body);
         revalidateTag('user')
+
         return respond;
     };
 
@@ -62,9 +64,9 @@ export default async function EditUserPage(props: { params: UserPageProps }) {
         <div>
             <PageBreadcrumb
                 items={[
-                    { title: "Home", href: "/" },
-                    { title: "Users", href: "/users" },
-                    { title: "Edit" }
+                    { title: commonT('home'), href: "/" },
+                    { title: t('title'), href: "/users" },
+                    { title: t('update') }
                 ]}
             />
             <div

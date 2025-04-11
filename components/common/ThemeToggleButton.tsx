@@ -1,16 +1,53 @@
-import React from "react";
+import React, {useRef} from "react";
 import {useTheme} from "next-themes";
+import {flushSync} from "react-dom";
 
 export const ThemeToggleButton: React.FC = () => {
   const { resolvedTheme, setTheme } = useTheme();
+  const ref = useRef<HTMLButtonElement>(null);
 
-  const  toggleTheme = () => {
+  const toggleTheme = async () => {
     const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-  }
+
+    if (!ref.current || !document.startViewTransition ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const { top, left, width, height } = ref.current.getBoundingClientRect();
+    const x = left + width / 2;
+    const y = top + height / 2;
+    const maxRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = document.startViewTransition(() => {
+      flushSync(() => setTheme(newTheme));
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${maxRadius}px at ${x}px ${y}px)`
+            ],
+          },
+          {
+            duration: 500,
+            easing: 'ease-in-out',
+            pseudoElement: '::view-transition-new(root)',
+          }
+      );
+    });
+  };
+
 
   return (
     <button
+        ref={ref}
       onClick={toggleTheme}
       className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
     >
