@@ -26,6 +26,34 @@ const AppHeader: React.FC = () => {
     setApplicationMenuOpen(!isApplicationMenuOpen);
   };
 
+  // Memoized logo component with smooth transitions
+  const Logo = React.memo(function Logo() {
+    const showText = true;
+
+    return (
+        <Link
+            href="/"
+            aria-label="Home"
+            className="flex items-center h-12 overflow-hidden relative lg:hidden"
+        >
+          {/* Logo icon - always visible */}
+          <div className="flex items-center justify-center w-8 h-8 bg-brand-500 text-white rounded-lg z-10 ">
+            <span className="font-bold text-sm">IMS</span>
+          </div>
+
+          {/* Text that slides in/out */}
+          <span className={`
+                ml-3 text-lg font-semibold dark:text-white whitespace-nowrap
+                  ease-in-out
+                ${showText ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 absolute'}
+            `}>
+                IMS System
+            </span>
+        </Link>
+    );
+  });
+  Logo.displayName = 'Logo';
+
   return (
     <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
       <div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
@@ -69,22 +97,7 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link href="/" className="lg:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="./images/logo/logo.svg"
-              alt="Logo"
-            />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
-          </Link>
+          <Logo />
 
           <button
             onClick={toggleApplicationMenu}

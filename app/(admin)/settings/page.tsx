@@ -17,7 +17,6 @@ export default async function SettingPage() {
 
     const settings = await getAllSettings();
 
-
     async function updateSettingAction(key: SettingLabel, value: SettingValue): Promise<ApiResponse<Setting> | void> {
         'use server';
         const respond = await updateSetting(key, value, true);

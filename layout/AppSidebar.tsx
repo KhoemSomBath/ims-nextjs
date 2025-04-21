@@ -467,7 +467,7 @@ const AppSidebar: React.FC = () => {
             onMouseLeave={() => setIsHovered(false)}
             aria-label="Main navigation"
         >
-            <div className={`py-4 flex justify-center`}>
+            <div className={`py-4 pl-2 justify-center hidden lg:block`}>
                 <Logo
                     isExpanded={isExpanded}
                     isHovered={isHovered}
@@ -477,7 +477,7 @@ const AppSidebar: React.FC = () => {
 
             <div className="flex flex-col overflow-y-auto  ease-linear no-scrollbar">
                 <nav>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 xl:mt-0 mt-5">
                         {allNavGroups.map((group) => (
                             <div key={group.name} className="mb-2">
                                 <GroupHeader
