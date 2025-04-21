@@ -2,10 +2,10 @@
 
 'use server'
 
-import {createAuthSession, isTokenExpired, refreshAuthSession} from "./auth"
-import {CookieStore} from "./cookie-store";
 import {SettingLabel} from "@/types/settings";
 import {getSetting} from "./setting-loader";
+import {redirect} from "next/navigation";
+import {auth} from "@/auth";
 
 async function fetchWithAuth<T>(
     endpoint: string,
@@ -19,7 +19,7 @@ async function fetchWithAuth<T>(
         tags?: string[]
     } = {}
 ): Promise<T> {
-    const token = await CookieStore.get('session_token');
+    const session = await auth();
     const language = await getSetting<string>(SettingLabel.IMS_DEFAULT_LANGUAGE);
 
     // Build URL with query params
@@ -33,10 +33,10 @@ async function fetchWithAuth<T>(
         'Content-Type': 'application/json',
         'Accept-Language': `${language}`,
         ...options.headers,
-        ...(token ? {Authorization: `Bearer ${token}`} : {}),
+        ...(session ? {Authorization: `Bearer ${session.user.accessToken}`} : {}),
     };
 
-    let response = await fetch(url.toString(), {
+    const response = await fetch(url.toString(), {
         ...options,
         credentials: 'include',
         headers,
@@ -45,21 +45,7 @@ async function fetchWithAuth<T>(
 
     // Token refresh logic
     if (response.status === 401) {
-        const isTokenExpire = await isTokenExpired(token || '');
-        if (isTokenExpire) {
-            const refreshResponse = await refreshAuthSession();
-            if (refreshResponse) {
-                await createAuthSession(refreshResponse, false);
-                response = await fetch(url.toString(), {
-                    ...options,
-                    headers: {
-                        ...headers,
-                        Authorization: `Bearer ${refreshResponse.token}`,
-                    },
-                    next: {tags}
-                });
-            }
-        }
+        redirect('/signin');
     }
 
     return await response.json() as Promise<T>;

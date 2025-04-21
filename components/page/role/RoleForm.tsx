@@ -8,7 +8,7 @@ import {useToast} from "@/hooks/useToast";
 import Checkbox from "@/components/form/input/Checkbox";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 import useLocalNumeric from "@/hooks/useLocalNumeric"; // Import the Input component
 
 interface RoleFormProps {

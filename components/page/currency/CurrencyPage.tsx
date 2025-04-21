@@ -11,7 +11,7 @@ import {cn} from "@/lib/utils";
 import {useConfirmModal} from "@/hooks/useConfirmModal";
 import {useRouter} from "next/navigation";
 import type {Currency} from "@/types/Currency";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 import useDateFormat from "@/hooks/useDateFormat";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
 

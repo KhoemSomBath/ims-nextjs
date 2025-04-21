@@ -11,7 +11,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import {cn} from "@/lib/utils";
 import {IconButton} from "@/components/ui/button/IconButton";
 import {BaseDataTable} from "@/components/tables/BaseDataTable";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 import useDateFormat from "@/hooks/useDateFormat";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
 

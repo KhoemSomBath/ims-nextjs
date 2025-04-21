@@ -9,7 +9,7 @@ import {useToast} from "@/hooks/useToast";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
 import Select from "@/components/form/Select";
-import {useTranslations} from "use-intl";
+import {useTranslations} from "next-intl";
 
 interface UserFormProps {
     user?: User;

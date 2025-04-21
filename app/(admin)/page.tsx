@@ -10,9 +10,19 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
 
 
-  return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
+  // async function onSubmitAction(query: string): Promise<{ value: string; label: string }[]> {
+  //   'use server'
+  //   const data = await getWithAuth<ApiResponse<User[]>>(`/user?query=${query}`, {tags: ['user'],});
+  //   return data.data.map((item: User) => ({
+  //     value: item.id.toString(),
+  //     label: item.name
+  //   }));
+  // }
 
+
+  return (
+    <div className="w-full">
+      {/*<CategoryForm onSubmitAction={onSubmitAction} />*/}
     </div>
   );
 }

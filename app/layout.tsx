@@ -2,13 +2,13 @@ import {Noto_Sans_Khmer, Outfit} from 'next/font/google';
 import './globals.css';
 import {SidebarProvider} from '@/context/SidebarContext';
 import {ThemeProvider} from "next-themes";
-import {getCurrentUser} from "@/lib/auth";
 import {AuthProvider} from "@/context/AuthProvider";
 import type {Metadata, Viewport} from "next";
 import React from "react";
 import {NextIntlClientProvider} from "next-intl";
 import {getSetting} from "@/lib/setting-loader";
 import {SettingLabel} from "@/types/settings";
+import {auth} from "@/auth";
 
 export const metadata: Metadata = {
     title: {
@@ -53,7 +53,7 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const user = await getCurrentUser();
+    const session = await auth();
     const locale = await getSetting<string>(SettingLabel.IMS_DEFAULT_LANGUAGE)
 
     return (
@@ -68,7 +68,7 @@ export default async function RootLayout({
                 disableTransitionOnChange
                 storageKey="ims-theme"
             >
-                <AuthProvider user={user}>
+                <AuthProvider session={session}>
                     <SidebarProvider>
                         {children}
                     </SidebarProvider>

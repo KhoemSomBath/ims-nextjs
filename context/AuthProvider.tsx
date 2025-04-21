@@ -1,43 +1,41 @@
 // components/AuthProvider.tsx
 "use client";
 
-import type {UserAuth} from "@/types/Auth";
-import {createContext, type ReactNode, useCallback, useContext} from "react";
+import {createContext, type ReactNode, useContext} from "react";
 import {useRouter} from "next/navigation";
-import {clearAuthSession} from "@/lib/auth";
+import {Session} from "next-auth";
+import {signOut} from "next-auth/react";
 
 type AuthContextType = {
-    user: UserAuth | null;
-    clearSession: () => Promise<void>;
+    session: Session | null;
+    logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
-    user: null,
-    clearSession: async () => {
+    session: null,
+    logout: async () => {
     },
 });
 
 export function AuthProvider({
-                                 user,
+                                 session,
                                  children,
                              }: {
-    user: UserAuth | null;
+    session: Session | null;
     children: ReactNode;
 }) {
 
     const router = useRouter();
 
-    const handleClearSession = useCallback(async () => {
-        try {
-            await clearAuthSession();
-            router.replace('/signin');
-        } catch (error) {
-            console.error('Failed to clear session:', error);
-        }
-    }, [router]);
+    const logOut = async () => {
+        await signOut({
+            redirect: false
+        });
+        router.push("signin");
+    }
 
     return (
-        <AuthContext.Provider value={{user, clearSession: handleClearSession}}>
+        <AuthContext.Provider value={{session, logout: logOut}}>
             {children}
         </AuthContext.Provider>
     );
