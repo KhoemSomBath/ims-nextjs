@@ -43,7 +43,6 @@ export default async function CreateUserPage() {
             role: { id: number };
             status: boolean
         }>('/user', body);
-        console.log(respond)
         revalidateTag('user')
         return respond;
     };

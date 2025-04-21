@@ -10,6 +10,8 @@ declare module "next-auth" {
         role: string;
         accessToken: string;
         refreshToken: string;
+        accessTokenExpires: number;
+        refreshTokenExpires: number;
         emailVerified: Date | null;
         image: string | null;
     }
@@ -21,6 +23,9 @@ declare module "next-auth" {
             email: string | null;
             role: string;
             accessToken: string;
+            refreshToken: string;
+            accessTokenExpires: number;
+            refreshTokenExpires: number;
             image: string | null;
         };
     }
@@ -35,6 +40,8 @@ declare module "next-auth/jwt" {
             role: string;
             accessToken: string;
             refreshToken: string;
+            accessTokenExpires: number;
+            refreshTokenExpires: number;
         };
     }
 }
