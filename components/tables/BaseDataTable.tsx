@@ -1,31 +1,41 @@
 // components/ReactDataTable.tsx
 'use client';
 
-import {type ColumnDef, flexRender, getCoreRowModel, useReactTable,} from '@tanstack/react-table';
+import {
+    type ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    getSortedRowModel,
+    type SortingState,
+} from '@tanstack/react-table';
 import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {Loader2, PlusCircle, Search, X} from 'lucide-react';
+import {ChevronDown, ChevronsUpDown, ChevronUp, Loader2, PlusCircle, Search, X} from 'lucide-react';
 import React, {useMemo, useState} from 'react';
 import Button from "@/components/ui/button/Button";
 import Pagination from "@/components/tables/Pagination";
 import {cn} from "@/lib/utils";
-import type {ApiResponse} from "@/types/BaseRespond";
+import {ApiResponse} from "@/types/BaseRespond";
 import {useTranslations} from "next-intl";
 import useLocalNumeric from "@/hooks/useLocalNumeric";
 
 interface ReactDataTableProps<TData> {
-    pageData: ApiResponse<TData[]>,
-    columns: ColumnDef<TData>[],
-    query?: string,
-    addNewLink?: string,
+    pageData: ApiResponse<TData[]>;
+    columns: ColumnDef<TData>[];
+    query?: string;
+    addNewLink?: string;
     actions?: {
         icon?: React.ReactNode;
         name: string;
         onClick: (row: TData) => void;
         className?: string;
-    }[],
-    className?: string,
-    emptyState?: React.ReactNode,
-    isPagination?: boolean
+    }[];
+    className?: string;
+    emptyState?: React.ReactNode;
+    searchAble?: boolean;
+    isPagination?: boolean;
+    sortable?: boolean;
+    initialSorting?: SortingState;
 }
 
 export function BaseDataTable<TData>({
@@ -36,6 +46,8 @@ export function BaseDataTable<TData>({
                                          className,
                                          emptyState,
                                          isPagination = true,
+                                         searchAble = true,
+                                         initialSorting = [],
                                      }: ReactDataTableProps<TData>) {
     const {replace, push} = useRouter();
     const searchParams = useSearchParams();
@@ -45,9 +57,8 @@ export function BaseDataTable<TData>({
 
     // Calculate display range
     const {data, paging} = pageData;
-
     const {page, size, totals, totalPage} = paging;
-    const currentPage = page + 1; // Convert to 1-based for display
+    const currentPage = page + 1;
     const startElement = Math.min((currentPage - 1) * size + 1, totals);
     const endElement = Math.min(currentPage * size, totals);
 
@@ -56,6 +67,9 @@ export function BaseDataTable<TData>({
     const [searchQuery, setSearchQuery] = useState(currentQuery);
     const [isSearching, setIsSearching] = useState(false);
     const showClearIcon = searchQuery === currentQuery && searchQuery !== '';
+
+    // Sorting state
+    const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
     // Add actions column if provided
     const tableColumns = useMemo<ColumnDef<TData>[]>(() => {
@@ -80,6 +94,7 @@ export function BaseDataTable<TData>({
                         ))}
                     </div>
                 ),
+                enableSorting: false, // Actions column should not be sortable
             });
         }
         return baseColumns;
@@ -89,9 +104,13 @@ export function BaseDataTable<TData>({
         data,
         columns: tableColumns,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        onSortingChange: setSorting,
         manualPagination: true,
+        manualSorting: true,
         state: {
             pagination: {pageIndex: currentPage, pageSize: size},
+            sorting,
         },
     });
 
@@ -130,6 +149,34 @@ export function BaseDataTable<TData>({
         replace(`${pathname}?${params.toString()}`);
     };
 
+    const handleSort = (columnId: string) => {
+        const params = new URLSearchParams(searchParams);
+        const currentSort = params.get('sort');
+
+        let newDirection: 'asc' | 'desc' | null = null;
+
+        if (!currentSort || !currentSort.startsWith(columnId)) {
+            newDirection = 'asc';
+        } else if (currentSort === `${columnId},asc`) {
+            newDirection = 'desc';
+        }
+
+        if (newDirection) {
+            params.set('sort', `${columnId},${newDirection}`);
+        } else {
+            params.delete('sort');
+        }
+        params.delete('page');
+
+        replace(`${pathname}?${params.toString()}`);
+    };
+
+    const getSortDirection = (columnId: string) => {
+        const sortParam = searchParams.get('sort');
+        if (!sortParam || !sortParam.startsWith(columnId)) return null;
+        return sortParam.split(',')[1] as 'asc' | 'desc';
+    };
+
     return (
         <div className={cn("space-y-4", className)}>
             {/* Search and Add New Header */}
@@ -148,7 +195,7 @@ export function BaseDataTable<TData>({
                     )}
                 </div>
 
-                <div className="w-full max-w-xs">
+                {searchAble && <div className="w-full max-w-xs">
                     <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer">
                             {isSearching ? (
@@ -184,6 +231,7 @@ export function BaseDataTable<TData>({
                         </button>
                     </div>
                 </div>
+                }
             </div>
 
             {/* Table */}
@@ -193,17 +241,39 @@ export function BaseDataTable<TData>({
                         <thead>
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
-                                    <th
-                                        key={header.id}
-                                        className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider"
-                                    >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                    </th>
-                                ))}
+                                {headerGroup.headers.map(header => {
+                                    const isSortable = header.column.getCanSort();
+                                    const sortDirection = isSortable ? getSortDirection(header.column.id) : null;
+
+                                    return (
+                                        <th
+                                            key={header.id}
+                                            className={cn(
+                                                "px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider",
+                                                isSortable ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800" : ""
+                                            )}
+                                            onClick={() => isSortable && handleSort(header.column.id)}
+                                        >
+                                            <div className="flex items-center">
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                                {isSortable && (
+                                                    <span className="ml-2">
+                            {sortDirection === 'asc' ? (
+                                <ChevronUp className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                            ) : sortDirection === 'desc' ? (
+                                <ChevronDown className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+                            ) : (
+                                <ChevronsUpDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                            )}
+                        </span>
+                                                )}
+                                            </div>
+                                        </th>
+                                    );
+                                })}
                             </tr>
                         ))}
                         </thead>
@@ -232,7 +302,7 @@ export function BaseDataTable<TData>({
                                 <td colSpan={table.getAllColumns().length} className="px-6 py-24 text-center">
                                     {emptyState || (
                                         <div className="text-gray-500 dark:text-gray-400">
-                                            No data available
+                                            {t('no_data_found')}
                                         </div>
                                     )}
                                 </td>

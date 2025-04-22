@@ -67,7 +67,8 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
         {
             accessorKey: 'id',
             header: t('no'),
-            cell: ({row}) => toLocalNumeric(row.index + 1)
+            enableSorting: true,
+            cell: ({row}) => toLocalNumeric(row.original.id)
         },
         {
             accessorKey: 'name',
@@ -76,17 +77,20 @@ export default function Categories({data, handleDelete, query}: RolesPageProps) 
         },
         {
             accessorKey: 'description',
+            enableSorting: false,
             header: categoryT('columns.description'),
             cell: ({row}) => row.original.description
         },
         {
             accessorKey: 'createdAt',
             header: t('createdAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
             header: t('updatedAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.updatedAt),
         },
         ...(actions ? [{

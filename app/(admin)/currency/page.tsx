@@ -7,6 +7,7 @@ import {revalidateTag} from "next/cache";
 import type {Currency} from "@/types/Currency";
 import {Loading} from "@/components/common/Loading";
 import CurrencyPage from "@/components/page/currency/CurrencyPage";
+import {getTranslations} from "next-intl/server";
 
 export const metadata: Metadata = {
     title: "Currency",
@@ -20,6 +21,8 @@ export default async function CurrencyServerPage(props: { searchParams: PageProp
 
     const searchParams = await props.searchParams;
     const {page = 1, query = ''} = searchParams;
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Currencies');
 
     const data = await getWithAuth<ApiResponse<Currency[]>>('/currency', {
         params: {
@@ -41,8 +44,8 @@ export default async function CurrencyServerPage(props: { searchParams: PageProp
     <div>
       <PageBreadcrumb
           items={[
-            { title: "Home", href: "/" },
-            { title: "Currency" }
+            { title: commonT('home'), href: "/" },
+            { title: t('title') }
           ]}
       />
         <Suspense key={`currency-${page}-${query}`} fallback={<Loading

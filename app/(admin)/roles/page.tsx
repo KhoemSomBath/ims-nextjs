@@ -14,21 +14,22 @@ export const metadata: Metadata = {
     description: "This is Role Page in IMS",
 };
 
-type RolesPageProps = Promise<{ page?: number, query?: string, from?: string }>
+type PageProps = Promise<{ page?: number, query?: string, sort?: string }>
 
 
-export default async function RolesPage(props: { searchParams: RolesPageProps }) {
+export default async function RolesPage(props: { searchParams: PageProps }) {
 
     const commonT = await getTranslations('Common');
     const t = await getTranslations('Roles');
 
     const searchParams = await props.searchParams;
-    const {page = 1, query = ''} = searchParams;
+    const {page = 1, query = '', sort} = searchParams;
 
     const data = await getWithAuth<ApiResponse<Role[]>>('/role', {
         params: {
             page: page - 1,
             query: query || '',
+            sort: sort || '',
         },
         tags: ['role'],
     })

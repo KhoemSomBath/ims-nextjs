@@ -67,31 +67,37 @@ export default function CurrencyPage({data, handleDelete, query}: RolesPageProps
         {
             accessorKey: 'id',
             header: commonT('no'),
+            enableSorting: false,
             cell: ({row}) => toLocalNumeric(row.index + 1)
         },
         {
             accessorKey: 'name',
             header: t('columns.name'),
+            enableSorting: false,
             cell: ({row}) => row.original.name
         },
         {
             accessorKey: 'code',
             header: t('columns.symbol'),
+            enableSorting: false,
             cell: ({row}) => row.original.code
         },
         {
             accessorKey: 'rate',
             header: t('columns.rate'),
+            enableSorting: false,
             cell: ({row}) => toLocalNumeric(row.original.rate)
         },
         {
             accessorKey: 'createdAt',
             header: commonT('createdAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
             header: commonT('updatedAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         ...(actions ? [{
@@ -132,6 +138,7 @@ export default function CurrencyPage({data, handleDelete, query}: RolesPageProps
                 addNewLink={'currency/new'}
                 columns={getColumns(actions)}
                 isPagination={false}
+                searchAble={false}
             />
             <ConfirmModal/>
         </div>

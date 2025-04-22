@@ -97,7 +97,7 @@ const authConfig: NextAuthConfig = {
                     }),
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token.user.refreshToken}`
+                        'Accept-Language': `kh`,
                     }
                 });
 

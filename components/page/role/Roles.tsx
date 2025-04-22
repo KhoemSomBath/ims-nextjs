@@ -69,7 +69,7 @@ export default function Roles({data, query, handleDelete}: RolesPageProps) {
         {
             accessorKey: 'id',
             header: commonT('no'),
-            cell: ({row}) => toLocalNumeric(row.index + 1)
+            cell: ({row}) => toLocalNumeric(row.original.id)
         },
         {
             accessorKey: 'name',
@@ -79,11 +79,13 @@ export default function Roles({data, query, handleDelete}: RolesPageProps) {
         {
             accessorKey: 'createdAt',
             header: commonT('createdAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
             header: commonT('updatedAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.updatedAt),
         },
         ...(actions ? [{

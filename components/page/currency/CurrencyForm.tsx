@@ -5,6 +5,7 @@ import type {ApiResponse} from "@/types/BaseRespond";
 import {useToast} from "@/hooks/useToast";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/form/input/InputField";
+import {useTranslations} from "next-intl";
 
 interface Currency {
     id?: number;
@@ -31,6 +32,7 @@ export default function CurrencyForm({currency, onSubmitAction}: CurrencyFormPro
         }
     });
 
+    const t = useTranslations('Currencies');
     const {showToast} = useToast();
     const router = useRouter();
 
@@ -67,21 +69,17 @@ export default function CurrencyForm({currency, onSubmitAction}: CurrencyFormPro
                     {/* Currency Code */}
                     <div className="space-y-2">
                         <label htmlFor="code" className="block text-sm font-medium text-muted-foreground">
-                            Currency Code
+                            {t('columns.symbol')}
                         </label>
                         <Input
                             {...register('code', {
-                                required: 'Currency code is required',
-                                maxLength: {
-                                    value: 5,
-                                    message: 'Code should be 5 characters or less'
-                                }
+                                required: t('validation.code'),
                             })}
                             error={!!errors.code}
                             hint={errors.code?.message}
                             id="code"
                             name="code"
-                            placeholder="e.g. USD, EUR"
+                            placeholder="e.g. $, ៛"
                             className="w-full"
                         />
                     </div>
@@ -89,10 +87,10 @@ export default function CurrencyForm({currency, onSubmitAction}: CurrencyFormPro
                     {/* Currency Name */}
                     <div className="space-y-2">
                         <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">
-                            Currency Name
+                            {t('columns.name')}
                         </label>
                         <Input
-                            {...register('name', {required: 'Currency name is required'})}
+                            {...register('name', {required: t('validation.name')})}
                             error={!!errors.name}
                             hint={errors.name?.message}
                             id="name"
@@ -105,14 +103,14 @@ export default function CurrencyForm({currency, onSubmitAction}: CurrencyFormPro
                     {/* Exchange Rate */}
                     <div className="space-y-2">
                         <label htmlFor="rate" className="block text-sm font-medium text-muted-foreground">
-                            Exchange Rate
+                            {t('columns.rate')}
                         </label>
                         <Input
                             {...register('rate', {
-                                required: 'Exchange rate is required',
+                                required: t('enter.rate'),
                                 min: {
-                                    value: 0.0001,
-                                    message: 'Rate must be greater than 0'
+                                    value: 0.1,
+                                    message: t('validation.rate')
                                 },
                                 valueAsNumber: true
                             })}
