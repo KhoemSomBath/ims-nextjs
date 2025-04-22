@@ -5,8 +5,12 @@ import CurrencyForm from "@/components/page/currency/CurrencyForm";
 import type {Currency} from "@/types/Currency";
 import {postWithAuth} from "@/lib/api-client";
 import {revalidateTag} from "next/cache";
+import {getTranslations} from "next-intl/server";
 
 export default async function CreateCurrencyPage() {
+
+    const commonT = await getTranslations('Common');
+    const t = await getTranslations('Currencies');
 
     // Server action for create/update
     const saveCurrency = async (data: {
@@ -26,9 +30,9 @@ export default async function CreateCurrencyPage() {
         <div>
             <PageBreadcrumb
                 items={[
-                    {title: "Home", href: "/"},
-                    {title: "Currency", href: "/currency"},
-                    {title: "New Currency"}
+                    {title: commonT('home'), href: "/"},
+                    {title: t('title'), href: "/currency"},
+                    {title: t('create')}
                 ]}
             />
             <div

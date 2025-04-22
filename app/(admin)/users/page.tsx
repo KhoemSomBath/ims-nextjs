@@ -15,12 +15,12 @@ export const metadata: Metadata = {
     description: "This is Users Page in IMS",
 };
 
-type UsersPageProps = Promise<{ page?: number, query?: string, from?: string }>
+type PageProps = Promise<{ page?: number, query?: string, sort?: string }>
 
 
-export default async function UsersPage(props: { searchParams: UsersPageProps }) {
+export default async function UsersPage(props: { searchParams: PageProps }) {
     const searchParams = await props.searchParams;
-    const {page = 1, query = ''} = searchParams;
+    const {page = 1, query = '', sort} = searchParams;
     const commonT = await getTranslations('Common');
     const t = await getTranslations('Users');
 
@@ -29,6 +29,7 @@ export default async function UsersPage(props: { searchParams: UsersPageProps })
         params: {
             page: page - 1,
             query: query || '',
+            sort: sort || '',
         },
         tags: ['user'],
     })

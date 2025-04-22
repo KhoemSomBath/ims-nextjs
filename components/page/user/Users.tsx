@@ -67,7 +67,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         {
             accessorKey: 'id',
             header: commonT('no'),
-            cell: ({row}) => toLocalNumeric(row.index + 1)
+            cell: ({row}) => toLocalNumeric(row.original.id)
         },
         {
             accessorKey: 'name',
@@ -77,6 +77,7 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         {
             accessorKey: 'role',
             header: t('columns.role'),
+            id: 'roleEntity.name',
             cell: ({row}) => (
                 <span
                     className="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700 dark:bg-brand-400/10 dark:text-brand-400">
@@ -87,11 +88,13 @@ export default function Users({data, handleDelete, query}: RolesPageProps) {
         {
             accessorKey: 'createdAt',
             header: commonT('createdAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.createdAt),
         },
         {
             accessorKey: 'updatedAt',
             header: commonT('updatedAt'),
+            enableSorting: false,
             cell: ({row}) => fullDateTime(row.original.updatedAt),
         },
         ...(actions ? [{

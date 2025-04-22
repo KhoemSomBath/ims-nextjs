@@ -69,7 +69,7 @@ export default function CategoryForm({category, onSubmitAction}: CategoryFormPro
                             hint={errors.name?.message}
                             id="name"
                             name="name"
-                            placeholder="Enter category name"
+                            placeholder={t('enter.name')}
                             className="w-full"
                         />
                     </div>
@@ -86,7 +86,7 @@ export default function CategoryForm({category, onSubmitAction}: CategoryFormPro
                             hint={errors.description?.message}
                             id="description"
                             name="description"
-                            placeholder="Enter category description"
+                            placeholder={t('enter.description')}
                             className="w-full"
                         />
                     </div>
