@@ -347,9 +347,11 @@ const AppSidebar: React.FC = () => {
         isActive: (path: string) => boolean;
     }) => {
         const isItemActive = isActive(subItem.path);
+        const showText = isExpanded || isHovered || isMobileOpen;
+
 
         return (
-            <li key={subItem.path}>
+            <li key={subItem.path} className={` ${!showText ? 'ml-2' : ''}`}>
                 <Link
                     href={subItem.path}
                     className={`menu-dropdown-item flex items-center gap-2 ${
@@ -365,7 +367,7 @@ const AppSidebar: React.FC = () => {
                     )}
 
                     {/* Name */}
-                    <span>{subItem.name}</span>
+                    <span>{showText && subItem.name}</span>
 
                 </Link>
             </li>
